@@ -6,11 +6,13 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalTime;
+
 @Entity
 @Table(name = "task")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Task extends BaseEntity{
+public class Task extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,14 +22,12 @@ public class Task extends BaseEntity{
     @JoinColumn(name = "folder_id", nullable = false)
     private Folder folder;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String level;
+    private String level; // "HIGH", "MIDDLE", "LOW" 값을 가짐
 
     @Column(nullable = false)
-    private Integer hour;
-
-    @Column(nullable = false)
-    private Integer minute;
+    private LocalTime time; // 예상 소요 시간
 
     @Column(columnDefinition = "TEXT")
     private String memo;
@@ -36,20 +36,11 @@ public class Task extends BaseEntity{
     private Boolean done;
 
     @Builder
-    public Task(Folder folder, String level, Integer hour, Integer minute, String memo) {
+    public Task(Folder folder, String level, LocalTime time, String memo) {
         this.folder = folder;
         this.level = level;
-        this.hour = hour;
-        this.minute = minute;
+        this.time = time;
         this.memo = memo;
-        this.done = false;
-    }
-
-    public void complete() {
-        this.done = true;
-    }
-
-    public void reopen() {
         this.done = false;
     }
 }
