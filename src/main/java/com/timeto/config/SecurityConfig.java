@@ -40,7 +40,7 @@ public class SecurityConfig {
                                 .userService(customOAuth2UserService))
                         .successHandler((request, response, authentication) -> {
                             // 로그인 성공 시 처리 로직
-                            response.sendRedirect("/swagger-ui/index.html");
+                            response.sendRedirect("/");
                         }));
 
         return http.build();
