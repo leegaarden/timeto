@@ -1,5 +1,6 @@
 package com.timeto.domain;
 
+import com.timeto.domain.enums.Color;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -25,10 +26,10 @@ public class Goal extends BaseEntity{
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String color;
+    private Color color;
 
     @Builder
-    public Goal(User user, String name, String color) {
+    public Goal(User user, String name, Color color) {
         this.user = user;
         this.name = name;
         this.color = color;

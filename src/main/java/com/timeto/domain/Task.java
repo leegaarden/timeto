@@ -1,5 +1,6 @@
 package com.timeto.domain;
 
+import com.timeto.domain.enums.Level;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -24,7 +25,7 @@ public class Task extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String level; // "HIGH", "MIDDLE", "LOW" 값을 가짐
+    private Level level; // "HIGH", "MIDDLE", "LOW" 값을 가짐
 
     @Column(nullable = false)
     private LocalTime time; // 예상 소요 시간
@@ -36,7 +37,7 @@ public class Task extends BaseEntity {
     private Boolean done;
 
     @Builder
-    public Task(Folder folder, String level, LocalTime time, String memo) {
+    public Task(Folder folder, Level level, LocalTime time, String memo) {
         this.folder = folder;
         this.level = level;
         this.time = time;

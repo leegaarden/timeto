@@ -16,6 +16,16 @@ spring:
           time_zone: Asia/Seoul
   application:
     name: timeto
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_PASSWORD}
+            scope:
+              - email
+              - profile
 springdoc:
   api-docs:
     path: /api-docs
