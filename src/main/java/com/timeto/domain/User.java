@@ -1,10 +1,7 @@
 package com.timeto.domain;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table(name = "user")
@@ -16,12 +13,15 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Setter
     @Column(length = 15, nullable = false)
     private String name;
 
+    @Setter
     @Column(length = 225, nullable = false)
     private String email;
 
+    @Setter
     @Column(nullable = false)
     private Boolean active;
 
