@@ -23,6 +23,7 @@ public class Goal extends BaseEntity{
     @Column(length = 25, nullable = false)
     private String name;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private String color;
 
