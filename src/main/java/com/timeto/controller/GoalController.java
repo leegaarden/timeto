@@ -13,8 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/v1/goals")
 @RequiredArgsConstructor
@@ -67,7 +65,7 @@ public class GoalController {
 
     @PutMapping("/name")
     @Operation(summary = "GOAL_API_04 : 목표 이름 변경", description = "목표의 이름을 변경합니다.")
-    public ApiResponse<GoalResponse.EditGoalName> editGoalName(
+    public ApiResponse<GoalResponse.EditGoalNameRes> editGoalName(
             @Valid @RequestBody GoalRequest.EditGoalNameReq request,
             Authentication authentication) {
 
@@ -76,8 +74,24 @@ public class GoalController {
         Long userId = oAuth2User.getId();
 
         // 서비스 호출하여 목표 이름 변경
-        GoalResponse.EditGoalName response = goalService.editGoalName(request, userId);
+        GoalResponse.EditGoalNameRes response = goalService.editGoalName(request, userId);
 
         return ApiResponse.success("목표 이름이 변경되었습니다.", response);
+    }
+
+    @PutMapping("/color")
+    @Operation(summary = "GOAL_API_05 : 목표 색상 변경", description = "목표의 색상을 변경합니다.")
+    public ApiResponse<GoalResponse.EditGoalColorRes> editGoalColor(
+            @Valid @RequestBody GoalRequest.EditGoalColorReq request,
+            Authentication authentication) {
+
+        // 현재 인증된 사용자 정보 가져오기
+        CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
+        Long userId = oAuth2User.getId();
+
+        // 서비스 호출하여 목표 색상 변경
+        GoalResponse.EditGoalColorRes response = goalService.editGoalColor(request, userId);
+
+        return ApiResponse.success("목표 색상이 변경되었습니다.", response);
     }
 }
