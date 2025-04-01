@@ -88,6 +88,7 @@ public class GoalService {
                                 int taskCount = taskRepository.countByFolderId(folder.getId());
 
                                 return new GoalResponse.FolderInfo(
+                                        folder.getId(),
                                         folder.getName(),
                                         taskCount
                                 );

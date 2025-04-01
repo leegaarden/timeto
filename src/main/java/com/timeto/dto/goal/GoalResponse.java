@@ -44,6 +44,9 @@ public class GoalResponse {
     @Schema(title = "GOAL_RES_02-2 : 목표 내 폴더 이름 및 할 일 개수")
     public record FolderInfo(
 
+            @Schema(description = "폴더 아이디", example = "1")
+            Long folderId,
+
             @Schema(description = "폴더 이름", example = "자료 구조")
             String folderName,
 
