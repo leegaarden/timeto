@@ -132,7 +132,7 @@ public class GoalService {
 
     // 목표 이름 변경
     @Transactional
-    public GoalResponse.EditGoalName editGoalName(GoalRequest.EditGoalNameReq request, Long userId) {
+    public GoalResponse.EditGoalNameRes editGoalName(GoalRequest.EditGoalNameReq request, Long userId) {
 
         // 사용자 조회
         User user = userRepository.findById(userId)
@@ -157,6 +157,31 @@ public class GoalService {
         Goal updatedGoal = goalRepository.save(goal);
 
         // 응답 생성
-        return new GoalResponse.EditGoalName(updatedGoal.getId(), updatedGoal.getName());
+        return new GoalResponse.EditGoalNameRes(updatedGoal.getId(), updatedGoal.getName());
+    }
+
+    // 목표 색상 변경
+    @Transactional
+    public GoalResponse.EditGoalColorRes editGoalColor(GoalRequest.EditGoalColorReq request, Long userId) {
+
+        // 사용자 조회
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND));
+
+        // 목표 조회
+        Goal goal = goalRepository.findById(request.goalId())
+                .orElseThrow(() -> new GeneralException(ErrorCode.GOAL_NOT_FOUND));
+
+        // 현재 색상과 변경하려는 색상이 같은지 확인
+        if (goal.getColor().name().equals(request.color())) {
+            throw new GeneralException(ErrorCode.SAME_GOAL_COLOR);
+        }
+
+        // 목표 색상 변경
+        goal.updateColor(request.color());
+        Goal updatedGoal = goalRepository.save(goal);
+
+        // 응답 생성
+        return new GoalResponse.EditGoalColorRes(updatedGoal.getId(), updatedGoal.getColor().name());
     }
 }

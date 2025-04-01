@@ -38,4 +38,8 @@ public class Goal extends BaseEntity{
     public void updateName(String name) {
         this.name = name;
     }
+
+    public void updateColor(String color) {
+        this.color = Color.valueOf(color);
+    }
 }
