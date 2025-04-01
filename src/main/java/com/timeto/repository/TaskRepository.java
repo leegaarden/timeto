@@ -2,6 +2,7 @@ package com.timeto.repository;
 
 import com.timeto.domain.Task;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -26,4 +27,10 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
 
     // 특정 사용자의 모든 할 일 조회 (목표와 폴더를 조인하여)
     List<Task> findByFolder_Goal_UserId(Long userId);
+
+    // 폴더 아이디로 조회
+    @Query("SELECT t.id FROM Task t WHERE t.folder.id = :folderId")
+    List<Long> findIdsByFolderId(Long folderId);
+
+    void deleteAllByIdIn(List<Long> ids);
 }

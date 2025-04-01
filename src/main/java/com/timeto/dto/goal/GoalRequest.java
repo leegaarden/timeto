@@ -35,4 +35,10 @@ public class GoalRequest {
             String color
 
     ) {}
+
+    @Schema(title = "GOAL_REQ_04 : 목표 삭제 요청")
+    public record DeleteGoalReq (
+            @Schema(description = "목표 ID", example = "1")
+            Long goalId
+    ) {}
 }
