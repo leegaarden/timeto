@@ -34,4 +34,8 @@ public class Goal extends BaseEntity{
         this.name = name;
         this.color = color;
     }
+
+    public void updateName(String name) {
+        this.name = name;
+    }
 }

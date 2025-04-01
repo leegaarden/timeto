@@ -16,6 +16,7 @@ public enum ErrorCode {
     // 목표 에러
     DUPLICATE_GOAL_NAME(HttpStatus.BAD_REQUEST, "G001", "목표 이름은 중복될 수 없습니다."),
     GOAL_NOT_FOUND(HttpStatus.NOT_FOUND, "G002", "목표를 찾을 수 없습니다."),
+    SAME_GOAL_NAME(HttpStatus.BAD_REQUEST, "G003", "현재 목표 이름과 동일합니다"),
 
     // 폴더 에러
     DUPLICATE_FOLDER_NAME(HttpStatus.BAD_REQUEST, "F001", "같은 목표 내 폴더 이름은 중복될 수 없습니다.");
