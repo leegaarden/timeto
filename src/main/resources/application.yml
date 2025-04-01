@@ -28,8 +28,7 @@ spring:
               - profile
 springdoc:
   api-docs:
-    path: /api-docs
+    path: /v3/api-docs
   swagger-ui:
     path: /swagger-ui.html
-    operations-sorter: method
-  packages-to-scan: com.timeto
+    operationsSorter: method

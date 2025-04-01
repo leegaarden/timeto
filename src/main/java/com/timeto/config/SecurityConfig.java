@@ -25,14 +25,15 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/",
-                                "/swagger-ui.html",  // 추가
+                                "/swagger-ui.html",
                                 "/swagger-ui/**",
-                                "/api-docs/**",      // 추가 (변경된 경로)
                                 "/v3/api-docs/**",
+                                "/swagger-resources/**",
+                                "/webjars/**",
                                 "/error").permitAll()
                         .anyRequest().authenticated())
                 .oauth2Login(oauth2 -> oauth2
@@ -40,15 +41,10 @@ public class SecurityConfig {
                                 .userService(customOAuth2UserService))
                         .successHandler((request, response, authentication) -> {
                             // 로그인 성공 시 처리 로직
-                            response.sendRedirect("/swagger-ui/index.html");
+                            response.sendRedirect("/swagger-ui.html");
                         }));
 
         return http.build();
     }
 
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring()
-                .requestMatchers("/h2-console/**", "/favicon.ico");
-    }
 }

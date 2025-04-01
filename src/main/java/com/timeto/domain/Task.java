@@ -36,6 +36,9 @@ public class Task extends BaseEntity {
     @Column(nullable = false)
     private Boolean done;
 
+    @Column(name = "display_order")
+    private Integer displayOrder;
+
     @Builder
     public Task(Folder folder, Level level, LocalTime time, String memo) {
         this.folder = folder;
