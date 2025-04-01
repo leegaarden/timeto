@@ -23,8 +23,8 @@ public class Folder extends BaseEntity{
     @Column(length = 25, nullable = false)
     private String name;
 
-    @Column
-    private Integer order;
+    @Column(name = "display_order")
+    private Integer displayOrder;
 
     @Builder
     public Folder(Goal goal, String name) {

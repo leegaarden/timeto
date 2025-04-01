@@ -8,7 +8,7 @@ spring:
     password: ${DB_PASSWORD}
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: create
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
@@ -28,7 +28,7 @@ spring:
               - profile
 springdoc:
   api-docs:
-    enabled: true
+    path: /v3/api-docs
   swagger-ui:
-    enabled: true
-  packages-to-scan: com.timeto
+    path: /swagger-ui.html
+    operationsSorter: method
