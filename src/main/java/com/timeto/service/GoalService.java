@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -184,5 +185,42 @@ public class GoalService {
 
         // 응답 생성
         return new GoalResponse.EditGoalColorRes(updatedGoal.getId(), updatedGoal.getColor().name());
+    }
+
+    // 목표 삭제
+    @Transactional
+    public GoalResponse.DeleteGoalRes deleteGoal(GoalRequest.DeleteGoalReq request, Long userId) {
+
+        // 사용자 조회
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND));
+
+        // 목표 조회
+        Goal goal = goalRepository.findById(request.goalId())
+                .orElseThrow(() -> new GeneralException(ErrorCode.GOAL_NOT_FOUND));
+
+        // 목표에 속한 폴더 ID 목록 조회
+        List<Long> folderIds = folderRepository.findIdsByGoalId(request.goalId());
+
+        // 각 폴더에 속한 할 일 ID 목록 조회
+        List<Long> taskIds = new ArrayList<>();
+        for (Long folderId : folderIds) {
+            List<Long> folderTaskIds = taskRepository.findIdsByFolderId(folderId);
+            taskIds.addAll(folderTaskIds);
+        }
+
+        // 할 일, 폴더, 목표 순서로 삭제 (외래 키 제약조건 때문)
+        if (!taskIds.isEmpty()) {
+            taskRepository.deleteAllByIdIn(taskIds);
+        }
+
+        if (!folderIds.isEmpty()) {
+            folderRepository.deleteAllByIdIn(folderIds);
+        }
+
+        goalRepository.delete(goal);
+
+        // 응답 생성
+        return new GoalResponse.DeleteGoalRes(request.goalId(), folderIds, taskIds);
     }
 }

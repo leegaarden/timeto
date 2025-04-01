@@ -31,7 +31,7 @@ public class GoalResponse {
             Long goalId,
 
             @Schema(description = "목표 이름", example = "광고학 강의 레포트")
-            String gaolName,
+            String goalName,
 
             @Schema(description = "목표 색상", example = "RED01")
             String color,
@@ -85,6 +85,18 @@ public class GoalResponse {
 
             @Schema(description = "변경된 색상", example = "GREEN01")
             String color
+    ) {}
+
+    @Schema(title = "GOAL_RES_06 : 목표 삭제 응답")
+    public record DeleteGoalRes (
+            @Schema(description = "삭제된 목표 ID", example = "1")
+            Long goalId,
+
+            @Schema(description = "삭제된 폴더 ID 목록", example = "[1, 2, 3]")
+            List<Long> deletedFolderIds,
+
+            @Schema(description = "삭제된 할 일 ID 목록", example = "[10, 11, 12, 13]")
+            List<Long> deletedTaskIds
     ) {}
 
 }
