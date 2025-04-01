@@ -1,5 +1,6 @@
 package com.timeto.controller;
 
+import com.timeto.apiPayload.ApiResponse;
 import com.timeto.dto.goal.GoalRequest;
 import com.timeto.dto.goal.GoalResponse;
 import com.timeto.oauth.CustomOAuth2User;
@@ -27,7 +28,7 @@ public class GoalController {
 
     @PostMapping
     @Operation(summary = "목표 생성", description = "새로운 목표를 생성합니다.")
-    public ResponseEntity<GoalResponse.CreateGoalRes> createGoal(
+    public ApiResponse<GoalResponse.CreateGoalRes> createGoal(
             @Valid @RequestBody GoalRequest.CreateGoalReq request,
             Authentication authentication) {
 
@@ -38,6 +39,6 @@ public class GoalController {
         // 서비스 호출하여 목표 생성
         GoalResponse.CreateGoalRes response = goalService.createGoal(request, userId);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ApiResponse.success("목표가 생성되었습니다.", response);
     }
 }

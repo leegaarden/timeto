@@ -25,7 +25,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/",
@@ -41,15 +41,10 @@ public class SecurityConfig {
                                 .userService(customOAuth2UserService))
                         .successHandler((request, response, authentication) -> {
                             // 로그인 성공 시 처리 로직
-                            response.sendRedirect("/");
+                            response.sendRedirect("/swagger-ui.html");
                         }));
 
         return http.build();
     }
 
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring()
-                .requestMatchers("/h2-console/**", "/favicon.ico");
-    }
 }
