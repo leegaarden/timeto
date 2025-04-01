@@ -129,4 +129,34 @@ public class GoalService {
         // 목표 목록을 포함한 응답 객체 생성
         return new GoalResponse.GetGoalsOnlyRes(goalInfos);
     }
+
+    // 목표 이름 변경
+    @Transactional
+    public GoalResponse.EditGoalName editGoalName(GoalRequest.EditGoalNameReq request, Long userId) {
+
+        // 사용자 조회
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND));
+
+        // 목표 조회
+        Goal goal = goalRepository.findById(request.goalId())
+                .orElseThrow(() -> new GeneralException(ErrorCode.GOAL_NOT_FOUND));
+
+        // 현재 이름과 변경하려는 이름이 같은지 확인
+        if (goal.getName().equals(request.goalName())) {
+            throw new GeneralException(ErrorCode.SAME_GOAL_NAME);
+        }
+
+        // 이름 중복 검사
+        if (goalRepository.existsByNameAndUserId(request.goalName(), userId)) {
+            throw new GoalException(ErrorCode.DUPLICATE_GOAL_NAME);
+        }
+
+        // 목표 이름 변경
+        goal.updateName(request.goalName());
+        Goal updatedGoal = goalRepository.save(goal);
+
+        // 응답 생성
+        return new GoalResponse.EditGoalName(updatedGoal.getId(), updatedGoal.getName());
+    }
 }

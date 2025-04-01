@@ -15,4 +15,14 @@ public class GoalRequest {
             @Schema(description = "목표 색상", example = "RED01")
             String color
     ) {}
+
+    @Schema(title = "GOAL_REQ_02 : 목표 이름 변경 요청")
+    public record EditGoalNameReq (
+            @Schema(description = "목표 아이디", example = "1")
+            Long goalId,
+
+            @Schema(description = "변경할 이름", example = "경영학 강의 레포트")
+            String goalName
+
+    ) {}
 }

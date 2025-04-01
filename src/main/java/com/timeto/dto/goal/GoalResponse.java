@@ -66,4 +66,13 @@ public class GoalResponse {
             String color
     ) {}
 
+    @Schema(title = "GOAL_RES_04 : 목표 이름 변경 응답")
+    public record EditGoalName (
+            @Schema(description = "목표 아이디", example = "1")
+            Long goalId,
+
+            @Schema(description = "변경된 이름", example = "경영학 강의 레포트")
+            String goalName
+    ) {}
+
 }

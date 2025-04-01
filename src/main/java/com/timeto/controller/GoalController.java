@@ -53,7 +53,7 @@ public class GoalController {
     }
 
     @GetMapping("/only-goals")
-    @Operation(summary = "목표만 조회", description = "사용자의 모든 목표와 색상만 조회합니다.")
+    @Operation(summary = "GOAL_API_03 : 목표만 조회", description = "사용자의 모든 목표와 색상만 조회합니다.")
     public ApiResponse<GoalResponse.GetGoalsOnlyRes> getUserGoalsOnly(Authentication authentication) {
         // 현재 인증된 사용자 정보 가져오기
         CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
@@ -63,5 +63,21 @@ public class GoalController {
         GoalResponse.GetGoalsOnlyRes response = goalService.getUserGoalsOnly(userId);
 
         return ApiResponse.success("목표 목록이 조회되었습니다.", response);
+    }
+
+    @PutMapping("/name")
+    @Operation(summary = "GOAL_API_04 : 목표 이름 변경", description = "목표의 이름을 변경합니다.")
+    public ApiResponse<GoalResponse.EditGoalName> editGoalName(
+            @Valid @RequestBody GoalRequest.EditGoalNameReq request,
+            Authentication authentication) {
+
+        // 현재 인증된 사용자 정보 가져오기
+        CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
+        Long userId = oAuth2User.getId();
+
+        // 서비스 호출하여 목표 이름 변경
+        GoalResponse.EditGoalName response = goalService.editGoalName(request, userId);
+
+        return ApiResponse.success("목표 이름이 변경되었습니다.", response);
     }
 }
