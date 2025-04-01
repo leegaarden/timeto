@@ -1,6 +1,5 @@
 package com.timeto.dto.goal;
 
-import com.timeto.config.exception.custom.annotation.ValidTextInput;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.List;
@@ -21,7 +20,7 @@ public class GoalResponse {
     ) {}
 
     @Schema(title = "GOAL_RES_02 : 사용자의 목표 조회 응답")
-    public record GetUserGoalsRes (
+    public record GetUserGoalRes(
             List<GoalsFolders> goalsFoldersList
     ) {}
 
@@ -35,18 +34,36 @@ public class GoalResponse {
             String color,
 
             @Schema(description = "폴더 이름 및 할 일 개수")
-            List<Folders> foldersList
+            List<FolderInfo> folderInfoList
 
     ) {}
 
     @Schema(title = "GOAL_RES_02-2 : 목표 내 폴더 이름 및 할 일 개수")
-    public record Folders (
+    public record FolderInfo(
 
             @Schema(description = "폴더 이름", example = "자료 구조")
             String folderName,
 
             @Schema(description = "할 일 개수", example = "4")
             int taskCount
+    ) {}
+
+    @Schema(title = "GOAL_RES_03 : 목표 목록 조회 응답")
+    public record GetGoalsOnlyRes (
+            @Schema(description = "목표 목록")
+            List<GoalInfo> goals
+    ) {}
+
+    @Schema(title = "GOAL_RES_03-1 : 목표 정보")
+    public record GoalInfo (
+            @Schema(description = "목표 아이디", example = "1")
+            Long goalId,
+
+            @Schema(description = "목표 이름", example = "광고학 강의 레포트")
+            String goalName,
+
+            @Schema(description = "목표 색상", example = "RED01")
+            String color
     ) {}
 
 }

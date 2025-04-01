@@ -65,7 +65,7 @@ public class GoalService {
 
     // 사용자 목표 조회
     @Transactional(readOnly = true)
-    public GoalResponse.GetUserGoalsRes getUserGoals(Long userId) {
+    public GoalResponse.GetUserGoalRes getUserGoals(Long userId) {
 
         // 사용자 조회
         User user = userRepository.findById(userId)
@@ -81,12 +81,12 @@ public class GoalService {
                     List<Folder> folders = folderRepository.findByGoalIdOrderByDisplayOrderAsc(goal.getId());
 
                     // 각 폴더에 대한 할 일 개수 계산 및 응답 DTO 생성
-                    List<GoalResponse.Folders> foldersList = folders.stream()
+                    List<GoalResponse.FolderInfo> folderInfoList = folders.stream()
                             .map(folder -> {
                                 // 폴더에 속한 할 일 개수 조회
                                 int taskCount = taskRepository.countByFolderId(folder.getId());
 
-                                return new GoalResponse.Folders(
+                                return new GoalResponse.FolderInfo(
                                         folder.getName(),
                                         taskCount
                                 );
@@ -97,12 +97,36 @@ public class GoalService {
                     return new GoalResponse.GoalsFolders(
                             goal.getName(),
                             goal.getColor().name(),
-                            foldersList
+                            folderInfoList
                     );
                 })
                 .collect(Collectors.toList());
 
         // 최종 응답 생성
-        return new GoalResponse.GetUserGoalsRes(goalsFoldersList);
+        return new GoalResponse.GetUserGoalRes(goalsFoldersList);
+    }
+
+    // 목표만 조회
+    @Transactional(readOnly = true)
+    public GoalResponse.GetGoalsOnlyRes getUserGoalsOnly(Long userId) {
+
+        // 사용자 조회
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND));
+
+        // 사용자의 모든 목표 조회
+        List<Goal> goals = goalRepository.findByUserId(userId);
+
+        // 목표 정보만 추출하여 DTO 변환
+        List<GoalResponse.GoalInfo> goalInfos = goals.stream()
+                .map(goal -> new GoalResponse.GoalInfo(
+                        goal.getId(),
+                        goal.getName(),
+                        goal.getColor().name()
+                ))
+                .collect(Collectors.toList());
+
+        // 목표 목록을 포함한 응답 객체 생성
+        return new GoalResponse.GetGoalsOnlyRes(goalInfos);
     }
 }
