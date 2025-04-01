@@ -1,5 +1,7 @@
 package com.timeto.service;
 
+import com.timeto.config.exception.ErrorCode;
+import com.timeto.config.exception.custom.GoalException;
 import com.timeto.domain.Goal;
 import com.timeto.domain.User;
 import com.timeto.domain.enums.Color;
@@ -24,8 +26,14 @@ public class GoalService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다. ID: " + userId));
 
+        // 이름 중복 검사
+        if (goalRepository.existsByNameAndUserId(request.goalName(), userId)) {
+            throw new GoalException(ErrorCode.DUPLICATE_GOAL_NAME);
+        }
+
         // String을 Color Enum으로 변환
         Color colorEnum = Color.valueOf(request.color());
+
         // Goal 엔티티 생성
         Goal goal = Goal.builder()
                 .name(request.goalName())
