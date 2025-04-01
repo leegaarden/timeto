@@ -27,8 +27,9 @@ public class Folder extends BaseEntity{
     private Integer displayOrder;
 
     @Builder
-    public Folder(Goal goal, String name) {
+    public Folder(Goal goal, String name, Integer displayOrder) {
         this.goal = goal;
         this.name = name;
+        this.displayOrder = displayOrder;
     }
 }
