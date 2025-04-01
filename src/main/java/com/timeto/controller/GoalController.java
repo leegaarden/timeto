@@ -8,12 +8,12 @@ import com.timeto.service.GoalService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/goals")
@@ -41,14 +41,27 @@ public class GoalController {
 
     @GetMapping
     @Operation(summary = "GOAL_API_02 : 사용자의 모든 목표와 폴더 조회", description = "사용자의 모든 목표와 각 목표에 속한 폴더 목록을 조회합니다.")
-    public ApiResponse<GoalResponse.GetUserGoalsRes> getUserGoals(Authentication authentication) {
+    public ApiResponse<GoalResponse.GetUserGoalRes> getUserGoals(Authentication authentication) {
         // 현재 인증된 사용자 정보 가져오기
         CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
         Long userId = oAuth2User.getId();
 
         // 서비스 호출하여 사용자의 모든 목표와 폴더 조회
-        GoalResponse.GetUserGoalsRes response = goalService.getUserGoals(userId);
+        GoalResponse.GetUserGoalRes response = goalService.getUserGoals(userId);
 
         return ApiResponse.success("모든 목표와 폴더가 조회되었습니다.", response);
+    }
+
+    @GetMapping("/only-goals")
+    @Operation(summary = "목표만 조회", description = "사용자의 모든 목표와 색상만 조회합니다.")
+    public ApiResponse<GoalResponse.GetGoalsOnlyRes> getUserGoalsOnly(Authentication authentication) {
+        // 현재 인증된 사용자 정보 가져오기
+        CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
+        Long userId = oAuth2User.getId();
+
+        // 서비스 호출하여 사용자의 목표만 조회
+        GoalResponse.GetGoalsOnlyRes response = goalService.getUserGoalsOnly(userId);
+
+        return ApiResponse.success("목표 목록이 조회되었습니다.", response);
     }
 }
