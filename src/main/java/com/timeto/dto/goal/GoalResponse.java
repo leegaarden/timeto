@@ -27,6 +27,9 @@ public class GoalResponse {
     @Schema(title = "GOAL_RES_02-1 : 목표와 폴더 조회 응답")
     public record GoalsFolders (
 
+            @Schema(description = "목표 아이디", example = "1")
+            Long goalId,
+
             @Schema(description = "목표 이름", example = "광고학 강의 레포트")
             String gaolName,
 

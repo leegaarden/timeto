@@ -95,6 +95,7 @@ public class GoalService {
 
                     // 각 목표별 응답 생성
                     return new GoalResponse.GoalsFolders(
+                            goal.getId(),
                             goal.getName(),
                             goal.getColor().name(),
                             folderInfoList
