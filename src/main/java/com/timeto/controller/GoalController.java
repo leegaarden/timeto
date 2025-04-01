@@ -27,7 +27,7 @@ public class GoalController {
     private final GoalService goalService;
 
     @PostMapping
-    @Operation(summary = "목표 생성", description = "새로운 목표를 생성합니다.")
+    @Operation(summary = "GOAL_API_01 : 목표 생성", description = "새로운 목표를 생성합니다.")
     public ApiResponse<GoalResponse.CreateGoalRes> createGoal(
             @Valid @RequestBody GoalRequest.CreateGoalReq request,
             Authentication authentication) {

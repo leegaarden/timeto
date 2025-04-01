@@ -2,7 +2,6 @@ package com.timeto.dto.goal;
 
 import com.timeto.config.exception.custom.annotation.ValidTextInput;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Setter;
 
 public class GoalRequest {
 

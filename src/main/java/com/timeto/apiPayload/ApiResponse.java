@@ -5,13 +5,14 @@ import com.timeto.config.exception.ErrorCode;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
 
 @Getter
 @Builder
 //@Schema(title = "API 공통 응답")
 public class ApiResponse<T> {
     @Schema(description = "상태 코드", example = "200")
-    private int status;
+    private HttpStatus status;
 
     @Schema(description = "에러 발생시 에러코드", example = "C401")
     private String code;
@@ -25,7 +26,7 @@ public class ApiResponse<T> {
     // 성공 응답 생성 메서드들
     public static <T> ApiResponse<T> success(String message, T data) {
         return ApiResponse.<T>builder()
-                .status(200)
+                .status(HttpStatus.OK)
                 .code(null)
                 .message(message)
                 .data(data)

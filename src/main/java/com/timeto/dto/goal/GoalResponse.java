@@ -8,6 +8,9 @@ public class GoalResponse {
     @Schema(title = "GOAL_RES_01 : 목표 생성 응답")
     public record CreateGoalRes (
 
+            @Schema(description = "목표 아이디", example = "1")
+            Long goalId,
+
             @Schema(description = "목표 이름", example = "광고학 강의 레포트")
             String goalName,
 
