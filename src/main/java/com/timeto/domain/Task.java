@@ -19,6 +19,9 @@ public class Task extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(length = 25, nullable = false)
+    private String name;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "folder_id", nullable = false)
     private Folder folder;
@@ -30,7 +33,7 @@ public class Task extends BaseEntity {
     @Column(nullable = false)
     private LocalTime time; // 예상 소요 시간
 
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT", nullable = true)
     private String memo;
 
     @Column(nullable = false)
@@ -40,11 +43,13 @@ public class Task extends BaseEntity {
     private Integer displayOrder;
 
     @Builder
-    public Task(Folder folder, Level level, LocalTime time, String memo) {
+    public Task(Folder folder, String name, Level level, LocalTime time, String memo, Boolean done, Integer displayOrder) {
         this.folder = folder;
+        this.name = name;
         this.level = level;
         this.time = time;
         this.memo = memo;
-        this.done = false;
+        this.done = done != null ? done : false;
+        this.displayOrder = displayOrder;
     }
 }
