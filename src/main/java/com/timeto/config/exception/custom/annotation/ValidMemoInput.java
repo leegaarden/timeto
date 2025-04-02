@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = TextInputValidator.class)
+@Constraint(validatedBy = MemoInputValidator.class)
 public @interface ValidMemoInput {
     // 오류 메시지
     String message() default "입력값은 특수 문자 없이 공백 포함 50자 이내여야 합니다";

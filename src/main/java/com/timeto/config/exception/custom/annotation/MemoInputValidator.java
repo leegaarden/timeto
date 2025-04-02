@@ -13,8 +13,8 @@ public class MemoInputValidator implements ConstraintValidator<ValidMemoInput, S
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        // null 값은 @NotNull로 처리해야 하므로 여기서는 유효하다고 처리
-        if (value == null) {
+        // null 값이나 빈 문자열은 유효하다고 처리
+        if (value == null || value.isEmpty()) {
             return true;
         }
 
