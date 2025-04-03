@@ -2,10 +2,7 @@ package com.timeto.dto.task;
 
 import com.timeto.config.exception.custom.annotation.ValidMemoInput;
 import com.timeto.config.exception.custom.annotation.ValidTextInput;
-import com.timeto.domain.enums.Level;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-import java.time.LocalTime;
 
 public class TaskRequest {
 
@@ -19,7 +16,7 @@ public class TaskRequest {
             String taskName,
 
             @Schema(description = "소요 시간", example = "{\"hour\": 1, \"minute\": 30}")
-            TimeRequest time,
+            TimeReq time,
 
             @Schema(description = "중요도", example = "HIGH")
             String level,
@@ -31,7 +28,7 @@ public class TaskRequest {
     
     // 시간 입력용 DTO
     @Schema(title = "TASK_REQ_01-1 : 시간 입력 요청")
-    public record TimeRequest (
+    public record TimeReq(
             @Schema(description = "시간", example = "1")
             int hour,
 

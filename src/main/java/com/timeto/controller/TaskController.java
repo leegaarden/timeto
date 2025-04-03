@@ -10,10 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/tasks")
@@ -37,5 +34,21 @@ public class TaskController {
         TaskResponse.CreateTaskRes response = taskService.createTask(request, userId);
 
         return ApiResponse.success("할 일이 생성되었습니다.", response);
+    }
+
+    @GetMapping("/{taskId}")
+    @Operation(summary = "할 일 조회", description = "특정 할 일의 상세 정보를 조회합니다.")
+    public ApiResponse<TaskResponse.GetTaskRes> getTask(
+            @PathVariable Long taskId,
+            Authentication authentication) {
+
+        // 현재 인증된 사용자 정보 가져오기
+        CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
+        Long userId = oAuth2User.getId();
+
+        // 서비스 호출하여 할 일 조회
+        TaskResponse.GetTaskRes response = taskService.getTask(taskId, userId);
+
+        return ApiResponse.success("할 일이 조회되었습니다.", response);
     }
 }

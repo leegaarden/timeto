@@ -3,12 +3,14 @@ package com.timeto.service;
 import com.timeto.config.exception.ErrorCode;
 import com.timeto.config.exception.GeneralException;
 import com.timeto.domain.Folder;
+import com.timeto.domain.Goal;
 import com.timeto.domain.Task;
 import com.timeto.domain.User;
 import com.timeto.domain.enums.Level;
 import com.timeto.dto.task.TaskRequest;
 import com.timeto.dto.task.TaskResponse;
 import com.timeto.repository.FolderRepository;
+import com.timeto.repository.GoalRepository;
 import com.timeto.repository.TaskRepository;
 import com.timeto.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -25,7 +27,9 @@ public class TaskService {
     private final UserRepository userRepository;
     private final TaskRepository taskRepository;
     private final FolderRepository folderRepository;
+    private final GoalRepository goalRepository;
 
+    // 할 일 생성
     @Transactional
     public TaskResponse.CreateTaskRes createTask(TaskRequest.CreateTaskReq request, Long userId) {
 
@@ -72,5 +76,41 @@ public class TaskService {
 
         // 응답 생성
         return new TaskResponse.CreateTaskRes(savedTask.getId(), savedTask.getName());
+    }
+
+    // 할 일 조회
+    public TaskResponse.GetTaskRes getTask (Long taskId, Long userId) {
+
+        // 사용자 조회
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND));
+
+        // 할 일 조회
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new GeneralException(ErrorCode.TASK_NOT_FOUND));
+
+        // 폴더 조회
+        Folder folder = folderRepository.findById(task.getFolder().getId())
+                .orElseThrow(() -> new GeneralException(ErrorCode.FOLDER_NOT_FOUND));
+
+        // 목표 조회
+        Goal goal = goalRepository.findById(folder.getGoal().getId())
+                .orElseThrow(() -> new GeneralException(ErrorCode.GOAL_NOT_FOUND));
+
+        // 응답 데이터 생성
+        TaskResponse.TimeRes timeRes = new TaskResponse.TimeRes(
+                task.getTime().getHour(),
+                task.getTime().getMinute()
+        );
+
+        return new TaskResponse.GetTaskRes(
+                goal.getName(),
+                folder.getName(),
+                task.getName(),
+                timeRes,
+                task.getLevel().name(),
+                task.getMemo()
+        );
+
     }
 }
