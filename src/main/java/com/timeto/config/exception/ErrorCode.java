@@ -22,7 +22,10 @@ public enum ErrorCode {
 
     // 폴더 에러
     DUPLICATE_FOLDER_NAME(HttpStatus.BAD_REQUEST, "F001", "같은 목표 내 폴더 이름은 중복될 수 없습니다."),
-    FOLDER_NOT_FOUND(HttpStatus.NOT_FOUND, "F002", "폴더를 찾을 수 없습니다.");
+    FOLDER_NOT_FOUND(HttpStatus.NOT_FOUND, "F002", "폴더를 찾을 수 없습니다."),
+    
+    // 할 일 에러 
+    TASK_NOT_FOUND(HttpStatus.NOT_FOUND, "F002", "할 일를 찾을 수 없습니다.");
 
     private final HttpStatus status;
     private final String code;
