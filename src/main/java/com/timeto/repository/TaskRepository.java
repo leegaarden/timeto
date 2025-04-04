@@ -33,4 +33,7 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     List<Long> findIdsByFolderId(Long folderId);
 
     void deleteAllByIdIn(List<Long> ids);
+
+    // TaskRepository 인터페이스에 추가
+    List<Task> findByFolderIdAndDoneOrderByDisplayOrderAsc(Long folderId, Boolean done);
 }

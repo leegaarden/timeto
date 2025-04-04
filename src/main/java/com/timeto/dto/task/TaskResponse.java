@@ -29,7 +29,7 @@ public class TaskResponse {
             @Schema(description = "소요 시간", example = "{\"hour\": 1, \"minute\": 30}")
             TimeRes time,
 
-            @Schema(description = "중요도", example = "HIGH")
+            @Schema(description = "중요도", example = "상")
             String level,
 
             @Schema(description = "메모", example = "다현아 화이팅")
