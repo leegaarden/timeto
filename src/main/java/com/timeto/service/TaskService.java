@@ -108,7 +108,7 @@ public class TaskService {
                 folder.getName(),
                 task.getName(),
                 timeRes,
-                task.getLevel().name(),
+                task.getLevel().toDisplayText(),
                 task.getMemo()
         );
 

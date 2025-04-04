@@ -1,9 +1,9 @@
 package com.timeto.domain.enums;
 
 public enum Level {
-    HIGH("높음"),
-    MIDDLE("중간"),
-    LOW("낮음");
+    HIGH("상"),
+    MIDDLE("중"),
+    LOW("하");
 
     private final String description;
 
@@ -13,5 +13,14 @@ public enum Level {
 
     public String getDescription() {
         return description;
+    }
+
+    public String toDisplayText() {
+        return switch (this) {
+            case HIGH -> "상";
+            case MIDDLE -> "중";
+            case LOW -> "하";
+            default -> this.name();
+        };
     }
 }
