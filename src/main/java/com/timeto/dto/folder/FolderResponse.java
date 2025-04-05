@@ -57,4 +57,13 @@ public class FolderResponse {
             @Schema(description = "타임 블럭에 넣은 날짜", example = "미정")
             String date
     ) {}
+
+    @Schema(title = "FOLDER_RES_O3 : 목표 내 폴더만 조회 응답")
+    public record GetFolderOnlyRes (
+            @Schema(description = "목표 이름", example = "사이드 프로젝트")
+            String goalName,
+
+            @Schema(description = "폴더 이름 리스트")
+            List<String> folderNames
+    ) {}
 }

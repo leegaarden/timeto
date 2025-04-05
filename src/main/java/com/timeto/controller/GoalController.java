@@ -52,13 +52,13 @@ public class GoalController {
 
     @GetMapping("/only-goals")
     @Operation(summary = "GOAL_API_03 : 목표만 조회", description = "사용자의 모든 목표와 색상만 조회합니다.")
-    public ApiResponse<GoalResponse.GetGoalsOnlyRes> getUserGoalsOnly(Authentication authentication) {
+    public ApiResponse<GoalResponse.GetGoalOnlyRes> getUserGoalsOnly(Authentication authentication) {
         // 현재 인증된 사용자 정보 가져오기
         CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
         Long userId = oAuth2User.getId();
 
         // 서비스 호출하여 사용자의 목표만 조회
-        GoalResponse.GetGoalsOnlyRes response = goalService.getUserGoalsOnly(userId);
+        GoalResponse.GetGoalOnlyRes response = goalService.getUserGoalsOnly(userId);
 
         return ApiResponse.success("목표 목록이 조회되었습니다.", response);
     }

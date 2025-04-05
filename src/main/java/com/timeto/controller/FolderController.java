@@ -51,4 +51,20 @@ public class FolderController {
 
         return ApiResponse.success("폴더 정보가 조회되었습니다.", response);
     }
+
+    @GetMapping("only-folders/{goalId}")
+    @Operation(summary = "FOLDER_API_03 : 목표 내 폴더 조회", description = "특정 목표에 속한 폴더 목록을 조회합니다.")
+    public ApiResponse<FolderResponse.GetFolderOnlyRes> getFoldersByGoal(
+            @PathVariable Long goalId,
+            Authentication authentication) {
+
+        // 현재 인증된 사용자 정보 가져오기
+        CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
+        Long userId = oAuth2User.getId();
+
+        // 서비스 호출하여 목표 내 폴더 목록 조회
+        FolderResponse.GetFolderOnlyRes response = folderService.getFoldersByGoal(goalId, userId);
+
+        return ApiResponse.success("목표 내 폴더 목록이 조회되었습니다.", response);
+    }
 }

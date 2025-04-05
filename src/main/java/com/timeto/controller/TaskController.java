@@ -37,7 +37,7 @@ public class TaskController {
     }
 
     @GetMapping("/{taskId}")
-    @Operation(summary = "할 일 조회", description = "특정 할 일의 상세 정보를 조회합니다.")
+    @Operation(summary = "TASK_API_02 : 할 일 조회", description = "특정 할 일의 상세 정보를 조회합니다.")
     public ApiResponse<TaskResponse.GetTaskRes> getTask(
             @PathVariable Long taskId,
             Authentication authentication) {
