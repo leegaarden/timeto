@@ -52,8 +52,8 @@ public class TaskService {
 
         // TimeRequest에서 LocalTime으로 변환
         LocalTime taskTime = LocalTime.of(
-                request.time().hour(),
-                request.time().minute()
+                request.hour(),
+                request.minute()
         );
 
         // 폴더 내 할 일 개수 조회하여 새 할 일 순서 결정
