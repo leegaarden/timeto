@@ -2,6 +2,7 @@ package com.timeto.service;
 
 import com.timeto.config.exception.ErrorCode;
 import com.timeto.config.exception.GeneralException;
+import com.timeto.config.exception.custom.GoalException;
 import com.timeto.domain.*;
 import com.timeto.domain.enums.Level;
 import com.timeto.dto.folder.FolderRequest;
@@ -168,5 +169,33 @@ public class FolderService {
 
         // 응답 생성
         return new FolderResponse.GetFolderOnlyRes(goal.getName(), folderNames);
+    }
+
+    // 폴더 이름 변경
+    public FolderResponse.EditFolderNameRes editFolderName (FolderRequest.EditFolderNameReq request, Long userId) {
+
+        // 사용자 조회
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND));
+
+        // 목표 조회
+        Folder folder = folderRepository.findById(request.folderId())
+                .orElseThrow(() -> new GeneralException(ErrorCode.FOLDER_NOT_FOUND));
+
+        // 현재 이름과 변경하려는 이름이 같은지 확인
+        if (folder.getName().equals(request.folderName())) {
+            throw new GeneralException(ErrorCode.SAME_FOLDER_NAME);
+        }
+
+        // 이름 중복 검사
+        if (folderRepository.existsByNameAndGoalId(request.folderName(), userId)) {
+            throw new GoalException(ErrorCode.DUPLICATE_FOLDER_NAME);
+        }
+
+        // 목표 이름 변경
+        folder.updateName(request.folderName());
+        Folder updateFolder = folderRepository.save(folder);
+
+        return new FolderResponse.EditFolderNameRes(request.folderId(), updateFolder.getName());
     }
 }
