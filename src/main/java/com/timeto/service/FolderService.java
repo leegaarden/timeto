@@ -201,6 +201,7 @@ public class FolderService {
     }
 
     // 폴더 삭제(내부 할 일도 함께 삭제)
+    @Transactional
     public FolderResponse.DeleteFolderRes deleteFolder (Long folderId, Long userId) {
 
         // 사용자 조회

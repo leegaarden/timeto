@@ -97,17 +97,12 @@ public class TaskService {
         Goal goal = goalRepository.findById(folder.getGoal().getId())
                 .orElseThrow(() -> new GeneralException(ErrorCode.GOAL_NOT_FOUND));
 
-        // 응답 데이터 생성
-        TaskResponse.TimeRes timeRes = new TaskResponse.TimeRes(
-                task.getTime().getHour(),
-                task.getTime().getMinute()
-        );
-
         return new TaskResponse.GetTaskRes(
                 goal.getName(),
                 folder.getName(),
                 task.getName(),
-                timeRes,
+                task.getTime().getHour(),
+                task.getTime().getMinute(),
                 task.getLevel().toDisplayText(),
                 task.getMemo()
         );

@@ -26,23 +26,17 @@ public class TaskResponse {
             @Schema(description = "할 일 이름", example = "경쟁사 캠페인 비교")
             String taskName,
 
-            @Schema(description = "소요 시간", example = "{\"hour\": 1, \"minute\": 30}")
-            TimeRes time,
+            @Schema(description = "시간", example = "1")
+            int hour,
+
+            @Schema(description = "분", example = "30")
+            int minute,
 
             @Schema(description = "중요도", example = "상")
             String level,
 
             @Schema(description = "메모", example = "다현아 화이팅")
             String memo
-    ) {}
-
-    @Schema(title = "TASK_RES_02-1 : 시간 응답")
-    public record TimeRes (
-            @Schema(description = "시간", example = "1")
-            int hour,
-
-            @Schema(description = "분", example = "30")
-            int minute
     ) {}
 
 }

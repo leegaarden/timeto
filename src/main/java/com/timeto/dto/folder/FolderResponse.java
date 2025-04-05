@@ -36,7 +36,7 @@ public class FolderResponse {
             @Schema(description = "완료한 할 일의 개수", example = "2")
             int doneCount,
 
-            @Schema(description = "진행 중인 할 일 정보")
+            @Schema(description = "완료한 할 일 정보")
             List<TaskInfo> doneTasks
     ) {}
 
