@@ -74,4 +74,15 @@ public class FolderResponse {
 
             @Schema(description = "변경된 이름", example = "브랜드별 소셜 마케팅 전략 조사")
             String folderName
-    ) {}}
+    ) {}
+
+    @Schema(title = "FOLDER_RES_05 : 폴더 삭제 응답")
+    public record DeleteFolderRes (
+            @Schema(description = "삭제된 폴더 아이디", example = "1")
+            Long folderId,
+
+            @Schema(description = "삭제된 할 일 아이디 목록", example = "[10, 11, 12, 13]")
+            List<Long> deletedTaskIds
+    ) {}
+}
+

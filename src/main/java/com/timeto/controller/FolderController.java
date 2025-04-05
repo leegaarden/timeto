@@ -1,6 +1,7 @@
 package com.timeto.controller;
 
 import com.timeto.apiPayload.ApiResponse;
+import com.timeto.domain.Folder;
 import com.timeto.dto.folder.FolderRequest;
 import com.timeto.dto.folder.FolderResponse;
 import com.timeto.dto.goal.GoalRequest;
@@ -85,4 +86,19 @@ public class FolderController {
 
         return ApiResponse.success("목표 이름이 변경되었습니다.", response);
     }
+
+    @DeleteMapping("/{folderId}")
+    @Operation(summary = "FOLDER_API_05 : 폴더 삭제", description = "폴더와 내부 할 일을 삭제합니다.")
+    public ApiResponse<FolderResponse.DeleteFolderRes> deleteFolder (
+            @PathVariable Long folderId,
+            Authentication authentication) {
+
+        // 현재 인증된 사용자 정보 가져오기
+        CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
+        Long userId = oAuth2User.getId();
+
+        FolderResponse.DeleteFolderRes response = folderService.deleteFolder(folderId, userId);
+        return ApiResponse.success("폴더와 내부 할 일이 삭제되었습니다.", response);
+    }
+
 }
