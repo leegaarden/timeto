@@ -224,4 +224,66 @@ public class FolderService {
 
         return new FolderResponse.DeleteFolderRes(folderId, folderTaskIds);
     }
+
+    // 폴더 순서 변경
+    @Transactional
+    public FolderResponse.EditFolderOrderRes editFolderOrder(FolderRequest.EditFolderOrderReq request, Long userId) {
+
+        // 사용자 조회
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND));
+
+        // 순서를 변경할 폴더 조회
+        Folder targetFolder = folderRepository.findById(request.folderId())
+                .orElseThrow(() -> new GeneralException(ErrorCode.FOLDER_NOT_FOUND));
+
+        // 폴더의 목표
+        Goal goal = targetFolder.getGoal();
+
+        // 현재 폴더의 순서
+        Integer currentOrder = targetFolder.getDisplayOrder();
+
+        // 변경하려는 순서가 현재 순서와 같으면 변경 불필요
+        if (currentOrder != null && currentOrder == request.changeOrder()) {
+            List<Long> currentOrderIds = folderRepository.findByGoalIdOrderByDisplayOrderAsc(goal.getId())
+                    .stream()
+                    .map(Folder::getId)
+                    .collect(Collectors.toList());
+            return new FolderResponse.EditFolderOrderRes(currentOrderIds);
+        }
+
+        // 같은 목표에 속한 모든 폴더 조회 (순서대로)
+        List<Folder> folders = folderRepository.findByGoalIdOrderByDisplayOrderAsc(goal.getId());
+
+        // 목표에 속한 폴더가 없는 경우 (이론적으로 발생 불가능)
+        if (folders.isEmpty()) {
+            throw new GeneralException(ErrorCode.INTERNAL_SERVER_ERROR);
+        }
+
+        // 변경하려는 위치가 범위를 벗어나는 경우
+        if (request.changeOrder() < 0 || request.changeOrder() >= folders.size()) {
+            throw new GeneralException(ErrorCode.INVALID_PARAMETER);
+        }
+
+        // 폴더 순서 변경 로직
+        // 1. 현재 순서에서 폴더 제거
+        folders.remove(targetFolder);
+
+        // 2. 새 위치에 폴더 삽입
+        folders.add(request.changeOrder(), targetFolder);
+
+        // 3. 모든 폴더의 순서 업데이트
+        for (int i = 0; i < folders.size(); i++) {
+            Folder folder = folders.get(i);
+            folder.updateOrder(i);
+            folderRepository.save(folder);
+        }
+
+        // 4. 변경된 순서의 폴더 ID 목록 생성
+        List<Long> updatedFolderIds = folders.stream()
+                .map(Folder::getId)
+                .collect(Collectors.toList());
+
+        return new FolderResponse.EditFolderOrderRes(updatedFolderIds);
+    }
 }
