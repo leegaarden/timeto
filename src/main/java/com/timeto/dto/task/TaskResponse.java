@@ -32,11 +32,29 @@ public class TaskResponse {
             @Schema(description = "분", example = "30")
             int minute,
 
-            @Schema(description = "중요도", example = "상")
+            @Schema(description = "중요도", example = "HIGH")
             String level,
 
             @Schema(description = "메모", example = "다현아 화이팅")
             String memo
     ) {}
 
+    @Schema(title = "TASK_RES_03 : 할 일 수정 응답")
+    public record EditTaskRes (
+
+            @Schema(description = "할 일 이름", example = "경쟁사 캠페인 비교")
+            String taskName,
+
+            @Schema(description = "시간", example = "1")
+            int hour,
+
+            @Schema(description = "분", example = "30")
+            int minute,
+
+            @Schema(description = "중요도", example = "HIGH")
+            String level,
+
+            @Schema(description = "메모", example = "다현아 화이팅")
+            String memo
+    ) {}
 }

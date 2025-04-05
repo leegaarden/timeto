@@ -46,7 +46,7 @@ public class FolderResponse {
             @Schema(description = "할 일 이름", example = "경쟁사 캠페인 비교")
             String taskName,
 
-            @Schema(description = "난이도", example = "상")
+            @Schema(description = "중요도", example = "HIGH")
             String level,
 
             @Schema(description = "시간", example = "1")

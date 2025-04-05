@@ -15,8 +15,11 @@ public class TaskRequest {
             @Schema(description = "할 일 이름", example = "경쟁사 캠페인 비교")
             String taskName,
 
-            @Schema(description = "소요 시간", example = "{\"hour\": 1, \"minute\": 30}")
-            TimeReq time,
+            @Schema(description = "시간", example = "1")
+            int hour,
+
+            @Schema(description = "분", example = "30")
+            int minute,
 
             @Schema(description = "중요도", example = "HIGH")
             String level,
@@ -25,14 +28,28 @@ public class TaskRequest {
             @Schema(description = "메모 (선택)", example = "코카콜라 마스터피스 캠페인", nullable = true)
             String memo
     ) {}
-    
-    // 시간 입력용 DTO
-    @Schema(title = "TASK_REQ_01-1 : 시간 입력 요청")
-    public record TimeReq(
+
+    @Schema(title = "TASK_REQ_02 : 할 일 수정 요청")
+    public record EditTaskReq (
+
+            @Schema(description = "수정할 할 일 아이디", example = "1")
+            Long taskId,
+
+            @ValidTextInput
+            @Schema(description = "할 일 이름", example = "경쟁사 캠페인 비교")
+            String taskName,
+
             @Schema(description = "시간", example = "1")
             int hour,
 
             @Schema(description = "분", example = "30")
-            int minute
+            int minute,
+
+            @Schema(description = "중요도", example = "HIGH")
+            String level,
+
+            @ValidMemoInput
+            @Schema(description = "메모 (선택)", example = "코카콜라 마스터피스 캠페인", nullable = true)
+            String memo
     ) {}
 }

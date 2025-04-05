@@ -101,7 +101,7 @@ public class FolderController {
         return ApiResponse.success("폴더와 내부 할 일이 삭제되었습니다.", response);
     }
 
-    @PutMapping("/order")
+    @PatchMapping("/order")
     @Operation(summary = "FOLDER_API_06 : 폴더 순서 변경", description = "폴더의 순서를 변경합니다.")
     public ApiResponse<FolderResponse.EditFolderOrderRes> editFolderOrder(
             @Valid @RequestBody FolderRequest.EditFolderOrderReq request,

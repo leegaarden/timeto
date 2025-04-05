@@ -63,7 +63,7 @@ public class GoalController {
         return ApiResponse.success("목표 목록이 조회되었습니다.", response);
     }
 
-    @PutMapping("/name")
+    @PatchMapping("/name")
     @Operation(summary = "GOAL_API_04 : 목표 이름 변경", description = "목표의 이름을 변경합니다.")
     public ApiResponse<GoalResponse.EditGoalNameRes> editGoalName(
             @Valid @RequestBody GoalRequest.EditGoalNameReq request,
@@ -79,7 +79,7 @@ public class GoalController {
         return ApiResponse.success("목표 이름이 변경되었습니다.", response);
     }
 
-    @PutMapping("/color")
+    @PatchMapping("/color")
     @Operation(summary = "GOAL_API_05 : 목표 색상 변경", description = "목표의 색상을 변경합니다.")
     public ApiResponse<GoalResponse.EditGoalColorRes> editGoalColor(
             @Valid @RequestBody GoalRequest.EditGoalColorReq request,

@@ -125,7 +125,7 @@ public class FolderService {
 
         return new FolderResponse.TaskInfo(
                 task.getName(),
-                task.getLevel().toDisplayText(),
+                task.getLevel().name(),
                 task.getTime().getHour(),
                 task.getTime().getMinute(),
                 date
