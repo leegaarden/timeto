@@ -24,4 +24,6 @@ public interface FolderRepository extends JpaRepository<Folder, Long> {
     List<Long> findIdsByGoalId(Long goalId);
 
     void deleteAllByIdIn(List<Long> ids);
+
+    boolean existsByNameAndGoalId(String folderName, Long goalId);
 }

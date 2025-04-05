@@ -66,4 +66,12 @@ public class FolderResponse {
             @Schema(description = "폴더 이름 리스트")
             List<String> folderNames
     ) {}
-}
+
+    @Schema(title = "FOLDER_RES_04 : 폴더 이름 변경 응답")
+    public record EditFolderNameRes(
+            @Schema(description = "폴더 아이디", example = "1")
+            Long folderId,
+
+            @Schema(description = "변경된 이름", example = "브랜드별 소셜 마케팅 전략 조사")
+            String folderName
+    ) {}}

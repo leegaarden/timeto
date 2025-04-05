@@ -3,6 +3,8 @@ package com.timeto.controller;
 import com.timeto.apiPayload.ApiResponse;
 import com.timeto.dto.folder.FolderRequest;
 import com.timeto.dto.folder.FolderResponse;
+import com.timeto.dto.goal.GoalRequest;
+import com.timeto.dto.goal.GoalResponse;
 import com.timeto.oauth.CustomOAuth2User;
 import com.timeto.service.FolderService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -66,5 +68,21 @@ public class FolderController {
         FolderResponse.GetFolderOnlyRes response = folderService.getFoldersByGoal(goalId, userId);
 
         return ApiResponse.success("목표 내 폴더 목록이 조회되었습니다.", response);
+    }
+
+    @PutMapping("/name")
+    @Operation(summary = "FOLDER_API_04 : 폴더 이름 변경", description = "폴더의 이름을 변경합니다.")
+    public ApiResponse<FolderResponse.EditFolderNameRes> editGFolderName(
+            @Valid @RequestBody FolderRequest.EditFolderNameReq request,
+            Authentication authentication) {
+
+        // 현재 인증된 사용자 정보 가져오기
+        CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
+        Long userId = oAuth2User.getId();
+
+        // 서비스 호출하여 목표 이름 변경
+        FolderResponse.EditFolderNameRes response = folderService.editFolderName(request, userId);
+
+        return ApiResponse.success("목표 이름이 변경되었습니다.", response);
     }
 }

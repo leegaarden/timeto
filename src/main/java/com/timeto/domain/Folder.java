@@ -26,6 +26,10 @@ public class Folder extends BaseEntity{
     @Column(name = "display_order")
     private Integer displayOrder;
 
+    public void updateName(String name) {
+        this.name = name;
+    }
+
     @Builder
     public Folder(Goal goal, String name, Integer displayOrder) {
         this.goal = goal;
