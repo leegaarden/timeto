@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -79,6 +80,7 @@ public class TaskService {
     }
 
     // 할 일 조회
+    @Transactional
     public TaskResponse.GetTaskRes getTask (Long taskId, Long userId) {
 
         // 사용자 조회
@@ -103,9 +105,73 @@ public class TaskService {
                 task.getName(),
                 task.getTime().getHour(),
                 task.getTime().getMinute(),
-                task.getLevel().toDisplayText(),
+                task.getLevel().name(),
                 task.getMemo()
         );
+    }
 
+    // 할 일 수정
+    @Transactional
+    public TaskResponse.EditTaskRes editTask (TaskRequest.EditTaskReq request, Long userId) {
+
+        // 사용자 조회
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND));
+
+        // 할 일 조회
+        Task task = taskRepository.findById(request.taskId())
+                .orElseThrow(() -> new GeneralException(ErrorCode.TASK_NOT_FOUND));
+
+        // 변경 사항 확인 플래그
+        boolean isChanged = false;
+
+        // 이름 변경 확인
+        if (!task.getName().equals(request.taskName())) {
+            task.updateName(request.taskName());
+            isChanged = true;
+        }
+
+        // 시간 변경 확인
+        LocalTime newTime = LocalTime.of(request.hour(), request.minute());
+        if (!task.getTime().equals(newTime)) {
+            task.updateTime(newTime);
+            isChanged = true;
+        }
+
+        // 중요도 변경 확인
+        Level newLevel;
+        try {
+            newLevel = Level.valueOf(request.level());
+        } catch (IllegalArgumentException e) {
+            throw new GeneralException(ErrorCode.INVALID_PARAMETER);
+        }
+
+        if (!task.getLevel().equals(newLevel)) {
+            task.updateLevel(newLevel);
+            isChanged = true;
+        }
+
+        // 메모 변경 확인 (null 고려)
+        if (!Objects.equals(task.getMemo(), request.memo())) {
+            task.updateMemo(request.memo());
+            isChanged = true;
+        }
+
+        // 변경 사항이 없으면 예외 처리
+        if (!isChanged) {
+            throw new GeneralException(ErrorCode.NO_CHANGES_DETECTED);
+        }
+
+        // 변경 사항 저장
+        Task updatedTask = taskRepository.save(task);
+
+        // 응답 생성
+        return new TaskResponse.EditTaskRes(
+                updatedTask.getName(),
+                updatedTask.getTime().getHour(),
+                updatedTask.getTime().getMinute(),
+                newLevel.name(),
+                updatedTask.getMemo()
+        );
     }
 }

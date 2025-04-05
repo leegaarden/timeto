@@ -42,6 +42,22 @@ public class Task extends BaseEntity {
     @Column(name = "display_order")
     private Integer displayOrder;
 
+    public void updateName(String name) {
+        this.name = name;
+    }
+
+    public void updateTime(LocalTime time) {
+        this.time = time;
+    }
+
+    public void updateLevel(Level level) {
+        this.level = level;
+    }
+
+    public void updateMemo(String memo) {
+        this.memo = memo;
+    }
+
     @Builder
     public Task(Folder folder, String name, Level level, LocalTime time, String memo, Boolean done, Integer displayOrder) {
         this.folder = folder;
