@@ -71,7 +71,7 @@ public class FolderController {
         return ApiResponse.success("목표 내 폴더 목록이 조회되었습니다.", response);
     }
 
-    @PutMapping("/name")
+    @PatchMapping("/name")
     @Operation(summary = "FOLDER_API_04 : 폴더 이름 변경", description = "폴더의 이름을 변경합니다.")
     public ApiResponse<FolderResponse.EditFolderNameRes> editGFolderName(
             @Valid @RequestBody FolderRequest.EditFolderNameReq request,

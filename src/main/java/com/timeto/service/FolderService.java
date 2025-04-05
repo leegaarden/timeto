@@ -173,6 +173,7 @@ public class FolderService {
     }
 
     // 폴더 이름 변경
+    @Transactional
     public FolderResponse.EditFolderNameRes editFolderName (FolderRequest.EditFolderNameReq request, Long userId) {
 
         // 사용자 조회
