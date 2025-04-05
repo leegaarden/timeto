@@ -101,4 +101,19 @@ public class FolderController {
         return ApiResponse.success("폴더와 내부 할 일이 삭제되었습니다.", response);
     }
 
+    @PutMapping("/order")
+    @Operation(summary = "FOLDER_API_06 : 폴더 순서 변경", description = "폴더의 순서를 변경합니다.")
+    public ApiResponse<FolderResponse.EditFolderOrderRes> editFolderOrder(
+            @Valid @RequestBody FolderRequest.EditFolderOrderReq request,
+            Authentication authentication) {
+
+        // 현재 인증된 사용자 정보 가져오기
+        CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
+        Long userId = oAuth2User.getId();
+
+        // 서비스 호출하여 폴더 순서 변경
+        FolderResponse.EditFolderOrderRes response = folderService.editFolderOrder(request, userId);
+
+        return ApiResponse.success("폴더 순서가 변경되었습니다.", response);
+    }
 }

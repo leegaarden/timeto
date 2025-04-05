@@ -30,6 +30,10 @@ public class Folder extends BaseEntity{
         this.name = name;
     }
 
+    public void updateOrder(Integer order) {
+        this.displayOrder = order;
+    }
+
     @Builder
     public Folder(Goal goal, String name, Integer displayOrder) {
         this.goal = goal;

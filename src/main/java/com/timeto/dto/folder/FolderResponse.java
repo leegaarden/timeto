@@ -2,6 +2,7 @@ package com.timeto.dto.folder;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import javax.swing.plaf.PanelUI;
 import java.util.List;
 
 public class FolderResponse {
@@ -83,6 +84,13 @@ public class FolderResponse {
 
             @Schema(description = "삭제된 할 일 아이디 목록", example = "[10, 11, 12, 13]")
             List<Long> deletedTaskIds
+    ) {}
+
+    @Schema(title = "FOLDER_RES_06 : 폴더 순서 변경 응답")
+    public record EditFolderOrderRes (
+
+            @Schema(description = "변경된 순서의 폴더 아이디", example = "[14, 11, 12, 13]")
+            List<Long> folderIds
     ) {}
 }
 
