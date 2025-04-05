@@ -15,6 +15,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -172,6 +173,7 @@ public class FolderService {
     }
 
     // 폴더 이름 변경
+    @Transactional
     public FolderResponse.EditFolderNameRes editFolderName (FolderRequest.EditFolderNameReq request, Long userId) {
 
         // 사용자 조회
@@ -197,5 +199,29 @@ public class FolderService {
         Folder updateFolder = folderRepository.save(folder);
 
         return new FolderResponse.EditFolderNameRes(request.folderId(), updateFolder.getName());
+    }
+
+    // 폴더 삭제(내부 할 일도 함께 삭제)
+    @Transactional
+    public FolderResponse.DeleteFolderRes deleteFolder (Long folderId, Long userId) {
+
+        // 사용자 조회
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND));
+
+        // 폴더 조회
+        Folder folder = folderRepository.findById(folderId)
+                .orElseThrow(() -> new GeneralException(ErrorCode.FOLDER_NOT_FOUND));
+
+        // 폴더 내부 할 일 조회
+        List<Long> folderTaskIds = taskRepository.findIdsByFolderId(folderId);
+
+        // 할 일, 폴더, 순서로 삭제 (외래 키 제약조건 때문)
+        if (!folderTaskIds.isEmpty()) {
+            taskRepository.deleteAllByIdIn(folderTaskIds);
+        }
+        folderRepository.delete(folder);
+
+        return new FolderResponse.DeleteFolderRes(folderId, folderTaskIds);
     }
 }

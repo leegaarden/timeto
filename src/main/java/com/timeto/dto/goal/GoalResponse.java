@@ -92,13 +92,13 @@ public class GoalResponse {
 
     @Schema(title = "GOAL_RES_06 : 목표 삭제 응답")
     public record DeleteGoalRes (
-            @Schema(description = "삭제된 목표 ID", example = "1")
+            @Schema(description = "삭제된 목표 아이디", example = "1")
             Long goalId,
 
-            @Schema(description = "삭제된 폴더 ID 목록", example = "[1, 2, 3]")
+            @Schema(description = "삭제된 폴더 아이디 목록", example = "[1, 2, 3]")
             List<Long> deletedFolderIds,
 
-            @Schema(description = "삭제된 할 일 ID 목록", example = "[10, 11, 12, 13]")
+            @Schema(description = "삭제된 할 일 아이디 목록", example = "[10, 11, 12, 13]")
             List<Long> deletedTaskIds
     ) {}
 
