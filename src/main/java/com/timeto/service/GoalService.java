@@ -76,7 +76,7 @@ public class GoalService {
         List<Goal> goals = goalRepository.findByUserId(userId);
 
         // 각 목표에 대한 폴더 및 할 일 정보를 포함한 응답 생성
-        List<GoalResponse.GoalsFolders> goalsFoldersList = goals.stream()
+        List<GoalResponse.GoalFolder> goalsFoldersList = goals.stream()
                 .map(goal -> {
                     // 목표에 속한 폴더 목록을 displayOrder 순서대로 조회
                     List<Folder> folders = folderRepository.findByGoalIdOrderByDisplayOrderAsc(goal.getId());
@@ -96,7 +96,7 @@ public class GoalService {
                             .collect(Collectors.toList());
 
                     // 각 목표별 응답 생성
-                    return new GoalResponse.GoalsFolders(
+                    return new GoalResponse.GoalFolder(
                             goal.getId(),
                             goal.getName(),
                             goal.getColor().name(),
@@ -111,7 +111,7 @@ public class GoalService {
 
     // 목표만 조회
     @Transactional(readOnly = true)
-    public GoalResponse.GetGoalsOnlyRes getUserGoalsOnly(Long userId) {
+    public GoalResponse.GetGoalOnlyRes getUserGoalsOnly(Long userId) {
 
         // 사용자 조회
         User user = userRepository.findById(userId)
@@ -130,7 +130,7 @@ public class GoalService {
                 .collect(Collectors.toList());
 
         // 목표 목록을 포함한 응답 객체 생성
-        return new GoalResponse.GetGoalsOnlyRes(goalInfos);
+        return new GoalResponse.GetGoalOnlyRes(goalInfos);
     }
 
     // 목표 이름 변경

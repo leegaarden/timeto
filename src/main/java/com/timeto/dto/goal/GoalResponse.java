@@ -21,11 +21,11 @@ public class GoalResponse {
 
     @Schema(title = "GOAL_RES_02 : 사용자의 목표 조회 응답")
     public record GetUserGoalRes(
-            List<GoalsFolders> goalsFoldersList
+            List<GoalFolder> goalsFoldersList
     ) {}
 
     @Schema(title = "GOAL_RES_02-1 : 목표와 폴더 조회 응답")
-    public record GoalsFolders (
+    public record GoalFolder(
 
             @Schema(description = "목표 아이디", example = "1")
             Long goalId,
@@ -55,7 +55,7 @@ public class GoalResponse {
     ) {}
 
     @Schema(title = "GOAL_RES_03 : 목표 목록 조회 응답")
-    public record GetGoalsOnlyRes (
+    public record GetGoalOnlyRes(
             @Schema(description = "목표 목록")
             List<GoalInfo> goals
     ) {}

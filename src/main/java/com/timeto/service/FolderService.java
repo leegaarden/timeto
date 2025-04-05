@@ -66,7 +66,7 @@ public class FolderService {
         );
     }
 
-    // 폴더 조회
+    // 폴더(할 일 포함) 조회
     @Transactional()
     public FolderResponse.GetFolderRes getFolder(Long folderId, Long userId) {
 
@@ -111,7 +111,7 @@ public class FolderService {
         );
     }
 
-    // 할 일 정보 생성 메서드
+    // 할 일 정보 생성
     private FolderResponse.TaskInfo createTaskInfo(Task task) {
         // 날짜 정보 (타임블록 관련 로직이 없으므로 "미정"으로 설정)
         String date = "미정";
@@ -144,5 +144,29 @@ public class FolderService {
                         // 같은 난이도 내에서는 생성일 기준 정렬
                         .thenComparing(BaseEntity::getCreatedAt))
                 .collect(Collectors.toList());
+    }
+
+    // 폴더만 조회
+    @Transactional()
+    public FolderResponse.GetFolderOnlyRes getFoldersByGoal(Long goalId, Long userId) {
+
+        // 사용자 조회
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND));
+
+        // 목표 조회
+        Goal goal = goalRepository.findById(goalId)
+                .orElseThrow(() -> new GeneralException(ErrorCode.GOAL_NOT_FOUND));
+
+        // 목표에 속한 폴더 목록 조회 (displayOrder 순으로 정렬)
+        List<Folder> folders = folderRepository.findByGoalIdOrderByDisplayOrderAsc(goalId);
+
+        // 폴더 이름 리스트 추출
+        List<String> folderNames = folders.stream()
+                .map(Folder::getName)
+                .collect(Collectors.toList());
+
+        // 응답 생성
+        return new FolderResponse.GetFolderOnlyRes(goal.getName(), folderNames);
     }
 }
