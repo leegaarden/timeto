@@ -190,18 +190,18 @@ public class GoalService {
 
     // 목표 삭제
     @Transactional
-    public GoalResponse.DeleteGoalRes deleteGoal(GoalRequest.DeleteGoalReq request, Long userId) {
+    public GoalResponse.DeleteGoalRes deleteGoal(Long goalId, Long userId) {
 
         // 사용자 조회
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND));
 
         // 목표 조회
-        Goal goal = goalRepository.findById(request.goalId())
+        Goal goal = goalRepository.findById(goalId)
                 .orElseThrow(() -> new GeneralException(ErrorCode.GOAL_NOT_FOUND));
 
         // 목표에 속한 폴더 ID 목록 조회
-        List<Long> folderIds = folderRepository.findIdsByGoalId(request.goalId());
+        List<Long> folderIds = folderRepository.findIdsByGoalId(goalId);
 
         // 각 폴더에 속한 할 일 ID 목록 조회
         List<Long> taskIds = new ArrayList<>();
@@ -222,6 +222,6 @@ public class GoalService {
         goalRepository.delete(goal);
 
         // 응답 생성
-        return new GoalResponse.DeleteGoalRes(request.goalId(), folderIds, taskIds);
+        return new GoalResponse.DeleteGoalRes(goalId, folderIds, taskIds);
     }
 }

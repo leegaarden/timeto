@@ -95,10 +95,10 @@ public class GoalController {
         return ApiResponse.success("목표 색상이 변경되었습니다.", response);
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{goalId}")
     @Operation(summary = "GOAL_API_06 : 목표 삭제", description = "목표와 그에 속한 모든 폴더 및 할 일을 삭제합니다.")
     public ApiResponse<GoalResponse.DeleteGoalRes> deleteGoal(
-            @Valid @RequestBody GoalRequest.DeleteGoalReq request,
+            @PathVariable Long goalId,
             Authentication authentication) {
 
         // 현재 인증된 사용자 정보 가져오기
@@ -106,7 +106,7 @@ public class GoalController {
         Long userId = oAuth2User.getId();
 
         // 서비스 호출하여 목표, 폴더, 할 일 삭제
-        GoalResponse.DeleteGoalRes response = goalService.deleteGoal(request, userId);
+        GoalResponse.DeleteGoalRes response = goalService.deleteGoal(goalId, userId);
 
         return ApiResponse.success("목표가 삭제되었습니다.", response);
     }
