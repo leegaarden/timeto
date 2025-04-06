@@ -36,4 +36,7 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
 
     // TaskRepository 인터페이스에 추가
     List<Task> findByFolderIdAndDoneOrderByDisplayOrderAsc(Long folderId, Boolean done);
+
+    @Query("SELECT t.timeBlock.id FROM Task t WHERE t.id IN :taskIds AND t.timeBlock IS NOT NULL")
+    List<Long> findTimeBlockIdsByTaskIds(List<Long> taskIds);
 }

@@ -28,6 +28,19 @@ public class TimeBlock extends BaseEntity{
     @Column(nullable = false)
     private LocalTime endTime;
 
+    @OneToOne(mappedBy = "timeBlock")
+    private Task task;
+
+    // 필요한 업데이트 메서드들
+    public void updateDate(LocalDate date) {
+        this.date = date;
+    }
+
+    public void updateTime(LocalTime startTime, LocalTime endTime) {
+        this.startTime = startTime;
+        this.endTime = endTime;
+    }
+
     @Builder
     public TimeBlock(LocalDate date, LocalTime startTime, LocalTime endTime) {
         this.date = date;
