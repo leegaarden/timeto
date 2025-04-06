@@ -101,7 +101,7 @@ public class GoalResponse {
             @Schema(description = "삭제된 할 일 아이디 목록", example = "[10, 11, 12, 13]")
             List<Long> deletedTaskIds,
 
-            @Schema(description = "삭제된 타임블럭 아이디 목록", example = "[20, 21, 22, 23]")
+            @Schema(description = "삭제된 타임 블럭 아이디 목록", example = "[20, 21, 22, 23]")
             List<Long> deletedTimeBlockIds
     ) {}
 

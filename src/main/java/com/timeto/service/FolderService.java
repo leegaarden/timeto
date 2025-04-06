@@ -7,10 +7,7 @@ import com.timeto.domain.*;
 import com.timeto.domain.enums.Level;
 import com.timeto.dto.folder.FolderRequest;
 import com.timeto.dto.folder.FolderResponse;
-import com.timeto.repository.FolderRepository;
-import com.timeto.repository.GoalRepository;
-import com.timeto.repository.TaskRepository;
-import com.timeto.repository.UserRepository;
+import com.timeto.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,6 +25,7 @@ public class FolderService {
     private final GoalRepository goalRepository;
     private final FolderRepository folderRepository;
     private final TaskRepository taskRepository;
+    private final TaskTimeBlockRepository taskTimeBlockRepository;
 
     // 폴더 생성
     public FolderResponse.CreateFolderRes createFolder (FolderRequest.CreateFolderReq request, Long userId) {
@@ -216,13 +214,16 @@ public class FolderService {
         // 폴더 내부 할 일 조회
         List<Long> folderTaskIds = taskRepository.findIdsByFolderId(folderId);
 
-        // 할 일, 폴더, 순서로 삭제 (외래 키 제약조건 때문)
-        if (!folderTaskIds.isEmpty()) {
-            taskRepository.deleteAllByIdIn(folderTaskIds);
+        // 각 할 일에 속한 타임 블럭 ID 목록 조회
+        List<Long> timeBlockIds = new ArrayList<>();
+        for (Long taskId : folderTaskIds) {
+            List<Long> taskTimeBlockIds = taskTimeBlockRepository.findTimeBlockIdsByTaskId(taskId);
+            timeBlockIds.addAll(taskTimeBlockIds);
         }
+
         folderRepository.delete(folder);
 
-        return new FolderResponse.DeleteFolderRes(folderId, folderTaskIds);
+        return new FolderResponse.DeleteFolderRes(folderId, folderTaskIds, timeBlockIds);
     }
 
     // 폴더 순서 변경

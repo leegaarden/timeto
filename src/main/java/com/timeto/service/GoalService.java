@@ -9,10 +9,7 @@ import com.timeto.domain.User;
 import com.timeto.domain.enums.Color;
 import com.timeto.dto.goal.GoalRequest;
 import com.timeto.dto.goal.GoalResponse;
-import com.timeto.repository.FolderRepository;
-import com.timeto.repository.GoalRepository;
-import com.timeto.repository.TaskRepository;
-import com.timeto.repository.UserRepository;
+import com.timeto.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +26,7 @@ public class GoalService {
     private final UserRepository userRepository;
     private final FolderRepository folderRepository;
     private final TaskRepository taskRepository;
+    private final TaskTimeBlockRepository taskTimeBlockRepository;
 
     // 목표 생성
     @Transactional
@@ -210,18 +208,17 @@ public class GoalService {
             taskIds.addAll(folderTaskIds);
         }
 
-        // 타임 블럭, 할 일, 폴더, 목표 순서로 삭제 (외래 키 제약조건 때문)
-        if (!taskIds.isEmpty()) {
-            taskRepository.deleteAllByIdIn(taskIds);
+        // 각 할 일에 속한 타임 블럭 ID 목록 조회
+        List<Long> timeBlockIds = new ArrayList<>();
+        for (Long taskId : taskIds) {
+            List<Long> taskTimeBlockIds = taskTimeBlockRepository.findTimeBlockIdsByTaskId(taskId);
+            timeBlockIds.addAll(taskTimeBlockIds);
         }
 
-        if (!folderIds.isEmpty()) {
-            folderRepository.deleteAllByIdIn(folderIds);
-        }
-
+        // 목표 삭제시 폴더-할 일-타임블럭 자동 삭제
         goalRepository.delete(goal);
 
         // 응답 생성
-        return new GoalResponse.DeleteGoalRes(goalId, folderIds, taskIds);
+        return new GoalResponse.DeleteGoalRes(goalId, folderIds, taskIds, timeBlockIds);
     }
 }
