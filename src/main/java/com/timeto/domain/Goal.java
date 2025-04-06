@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @Table(name = "goal")
 @Getter
@@ -27,6 +29,10 @@ public class Goal extends BaseEntity{
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Color color;
+
+    // 목표가 삭제되면 폴더도 삭제됨
+    @OneToMany(mappedBy = "goal", cascade = CascadeType.REMOVE)
+    private List<Folder> folders;
 
     @Builder
     public Goal(User user, String name, Color color) {

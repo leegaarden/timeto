@@ -99,7 +99,10 @@ public class GoalResponse {
             List<Long> deletedFolderIds,
 
             @Schema(description = "삭제된 할 일 아이디 목록", example = "[10, 11, 12, 13]")
-            List<Long> deletedTaskIds
+            List<Long> deletedTaskIds,
+
+            @Schema(description = "삭제된 타임블럭 아이디 목록", example = "[20, 21, 22, 23]")
+            List<Long> deletedTimeBlockIds
     ) {}
 
 }

@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @Table(name = "folder")
 @Getter
@@ -25,6 +27,10 @@ public class Folder extends BaseEntity{
 
     @Column(name = "display_order")
     private Integer displayOrder;
+
+    // 폴더가 삭제되면 할 일도 삭제됨
+    @OneToMany(mappedBy = "folder", cascade = CascadeType.REMOVE)
+    private List<Task> tasks;
 
     public void updateName(String name) {
         this.name = name;

@@ -210,7 +210,7 @@ public class GoalService {
             taskIds.addAll(folderTaskIds);
         }
 
-        // 할 일, 폴더, 목표 순서로 삭제 (외래 키 제약조건 때문)
+        // 타임 블럭, 할 일, 폴더, 목표 순서로 삭제 (외래 키 제약조건 때문)
         if (!taskIds.isEmpty()) {
             taskRepository.deleteAllByIdIn(taskIds);
         }

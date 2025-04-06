@@ -23,7 +23,7 @@ public class TaskTimeBlock extends BaseEntity {
     @JoinColumn(name = "task_id", nullable = false)
     private Task task;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "time_block_id", nullable = false)
     private TimeBlock timeBlock;
 
