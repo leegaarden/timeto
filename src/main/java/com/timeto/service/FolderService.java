@@ -25,7 +25,6 @@ public class FolderService {
     private final GoalRepository goalRepository;
     private final FolderRepository folderRepository;
     private final TaskRepository taskRepository;
-    private final TaskTimeBlockRepository taskTimeBlockRepository;
 
     // 폴더 생성
     public FolderResponse.CreateFolderRes createFolder (FolderRequest.CreateFolderReq request, Long userId) {
@@ -215,11 +214,7 @@ public class FolderService {
         List<Long> folderTaskIds = taskRepository.findIdsByFolderId(folderId);
 
         // 각 할 일에 속한 타임 블럭 ID 목록 조회
-        List<Long> timeBlockIds = new ArrayList<>();
-        for (Long taskId : folderTaskIds) {
-            List<Long> taskTimeBlockIds = taskTimeBlockRepository.findTimeBlockIdsByTaskId(taskId);
-            timeBlockIds.addAll(taskTimeBlockIds);
-        }
+        List<Long> timeBlockIds = taskRepository.findTimeBlockIdsByTaskIds(folderTaskIds);
 
         folderRepository.delete(folder);
 

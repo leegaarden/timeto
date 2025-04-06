@@ -2,17 +2,11 @@ package com.timeto.service;
 
 import com.timeto.config.exception.ErrorCode;
 import com.timeto.config.exception.GeneralException;
-import com.timeto.domain.Folder;
-import com.timeto.domain.Goal;
-import com.timeto.domain.Task;
-import com.timeto.domain.User;
+import com.timeto.domain.*;
 import com.timeto.domain.enums.Level;
 import com.timeto.dto.task.TaskRequest;
 import com.timeto.dto.task.TaskResponse;
-import com.timeto.repository.FolderRepository;
-import com.timeto.repository.GoalRepository;
-import com.timeto.repository.TaskRepository;
-import com.timeto.repository.UserRepository;
+import com.timeto.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,6 +23,7 @@ public class TaskService {
     private final TaskRepository taskRepository;
     private final FolderRepository folderRepository;
     private final GoalRepository goalRepository;
+    private final TimeBlockRepository timeBlockRepository;
 
     // 할 일 생성
     @Transactional
@@ -173,5 +168,29 @@ public class TaskService {
                 newLevel.name(),
                 updatedTask.getMemo()
         );
+    }
+
+    public TaskResponse.DeleteTaskRes deleteTask (Long taskId, Long userId) {
+
+        // 사용자 조회
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND));
+
+        // 할 일 조회
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new GeneralException(ErrorCode.TASK_NOT_FOUND));
+
+        // 타임 블럭 조회
+        TimeBlock timeBlock = task.getTimeBlock();
+        Long timeBlockId;
+        if (!(timeBlock ==null)) {
+            timeBlockId = timeBlock.getId();
+        } else {
+            timeBlockId = (long) -1;
+        }
+
+        taskRepository.delete(task);
+
+        return new TaskResponse.DeleteTaskRes(taskId, timeBlockId);
     }
 }

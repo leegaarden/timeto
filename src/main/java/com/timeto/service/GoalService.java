@@ -26,7 +26,6 @@ public class GoalService {
     private final UserRepository userRepository;
     private final FolderRepository folderRepository;
     private final TaskRepository taskRepository;
-    private final TaskTimeBlockRepository taskTimeBlockRepository;
 
     // 목표 생성
     @Transactional
@@ -209,11 +208,7 @@ public class GoalService {
         }
 
         // 각 할 일에 속한 타임 블럭 ID 목록 조회
-        List<Long> timeBlockIds = new ArrayList<>();
-        for (Long taskId : taskIds) {
-            List<Long> taskTimeBlockIds = taskTimeBlockRepository.findTimeBlockIdsByTaskId(taskId);
-            timeBlockIds.addAll(taskTimeBlockIds);
-        }
+        List<Long> timeBlockIds = taskRepository.findTimeBlockIdsByTaskIds(taskIds);
 
         // 목표 삭제시 폴더-할 일-타임블럭 자동 삭제
         goalRepository.delete(goal);

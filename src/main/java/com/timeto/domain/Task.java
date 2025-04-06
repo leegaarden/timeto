@@ -1,7 +1,6 @@
 package com.timeto.domain;
 
 import com.timeto.domain.enums.Level;
-import com.timeto.domain.mapping.TaskTimeBlock;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -45,8 +44,10 @@ public class Task extends BaseEntity {
     private Integer displayOrder;
 
     // 할 일이 삭제되면 타임블록 연결도 삭제됨
-    @OneToMany(mappedBy = "task", cascade = CascadeType.REMOVE)
-    private List<TaskTimeBlock> taskTimeBlocks;
+    // 타임블록과 일대일 관계
+    @OneToOne(cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @JoinColumn(name = "time_block_id")
+    private TimeBlock timeBlock;
 
     public void updateName(String name) {
         this.name = name;

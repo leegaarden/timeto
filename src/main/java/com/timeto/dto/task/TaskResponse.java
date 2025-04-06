@@ -57,4 +57,13 @@ public class TaskResponse {
             @Schema(description = "메모", example = "다현아 화이팅")
             String memo
     ) {}
+
+    @Schema(title = "TASK_RES_04 : 할 일 삭제 응답")
+    public record DeleteTaskRes (
+            @Schema(description = "할 일 아이디", example = "1")
+            Long taskId,
+
+            @Schema(description = "타임 블럭 아이디(없을 경우 -1 반환)", example = "1")
+            Long timeBlockId
+    ) {}
 }
