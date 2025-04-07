@@ -187,14 +187,27 @@ public class TaskService {
         // 타임 블럭 조회
         TimeBlock timeBlock = task.getTimeBlock();
         Long timeBlockId;
-        if (!(timeBlock ==null)) {
-            timeBlockId = timeBlock.getId();
-        } else {
-            timeBlockId = (long) -1;
-        }
+        timeBlockId = (timeBlock == null) ? (long) -1 : timeBlock.getId();
 
         taskRepository.delete(task);
 
         return new TaskResponse.DeleteTaskRes(taskId, timeBlockId);
+    }
+
+    // 할 일 완료
+    public Long doneTask (Long taskId, Long userId) {
+        // 사용자 조회
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND));
+
+        // 할 일 조회
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new GeneralException(ErrorCode.TASK_NOT_FOUND));
+
+        if(task.getDone()) {throw new GeneralException(ErrorCode.INVALID_DONE);}
+        task.updateDone();
+        taskRepository.save(task);
+
+        return taskId;
     }
 }
