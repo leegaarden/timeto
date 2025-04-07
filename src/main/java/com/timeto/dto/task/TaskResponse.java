@@ -2,6 +2,8 @@ package com.timeto.dto.task;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.util.List;
+
 public class TaskResponse {
 
     @Schema(title = "TASK_RES_01 : 할 일 생성 응답")
@@ -65,5 +67,12 @@ public class TaskResponse {
 
             @Schema(description = "타임 블럭 아이디(없을 경우 -1 반환)", example = "1")
             Long timeBlockId
+    ) {}
+
+    @Schema(title = "TASK_RES_05 : 할 일 순서 변경 응답")
+    public record EditTaskOrderRes (
+
+            @Schema(description = "변경된 순서의 할 일 아이디", example = "[14, 11, 12, 13]")
+            List<Long> taskIds
     ) {}
 }

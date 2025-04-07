@@ -4,6 +4,7 @@ import com.timeto.config.exception.ErrorCode;
 import com.timeto.config.exception.GeneralException;
 import com.timeto.domain.*;
 import com.timeto.domain.enums.Level;
+import com.timeto.dto.folder.FolderResponse;
 import com.timeto.dto.task.TaskRequest;
 import com.timeto.dto.task.TaskResponse;
 import com.timeto.repository.*;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -209,5 +211,70 @@ public class TaskService {
         taskRepository.save(task);
 
         return taskId;
+    }
+
+    // 할 일 순서 변경
+    public TaskResponse.EditTaskOrderRes editTaskOrder (TaskRequest.EditTaskOrderReq request, Long userId) {
+
+        // 사용자 조회
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND));
+
+        // 순서 변경할 할 일 조회
+        Task targetTask = taskRepository.findById(request.taskId())
+                .orElseThrow(() -> new GeneralException(ErrorCode.TASK_NOT_FOUND));
+
+        // 할 일의 폴더
+        Folder folder = targetTask.getFolder();
+
+        // 완료된 할 일이면 순서 변경 불가
+        if (targetTask.getDone()) {
+            throw new GeneralException(ErrorCode.INVALID_DONE_CHANGES);
+        }
+        // 현재 할 일의 순서
+        Integer currentOrder = targetTask.getDisplayOrder();
+
+        // 변경하려는 순서가 현재 순서와 같으면 변경 불필요
+        if (currentOrder != null && currentOrder == request.changeOrder()) {
+            List<Long> currentOrderIds = taskRepository.findByFolderIdAndDoneOrderByDisplayOrderAsc(folder.getId(), false)
+                    .stream()
+                    .map(Task::getId)
+                    .collect(Collectors.toList());
+            return new TaskResponse.EditTaskOrderRes(currentOrderIds);
+        }
+
+        // 같은 폴더에 속한 진행 중인 할 일만 조회 (순서대로)
+        List<Task> tasks = taskRepository.findByFolderIdAndDoneOrderByDisplayOrderAsc(folder.getId(), false);
+
+        // 폴더에 진행 중인 할 일이 없는 경우
+        if (tasks.isEmpty()) {
+            throw new GeneralException(ErrorCode.INTERNAL_SERVER_ERROR);
+        }
+
+        // 변경하려는 위치가 범위를 벗어나는 경우
+        if (request.changeOrder() < 0 || request.changeOrder() >= tasks.size()) {
+            throw new GeneralException(ErrorCode.INVALID_PARAMETER);
+        }
+
+        // 할 일 순서 변경 로직
+        // 1. 현재 순서에서 할 일 제거
+        tasks.remove(targetTask);
+
+        // 2. 새 위치에 할 일 삽입
+        tasks.add(request.changeOrder(), targetTask);
+
+        // 3. 모든 할 일의 순서 업데이트
+        for (int i = 0; i < tasks.size(); i++) {
+            Task task = tasks.get(i);
+            task.updateOrder(i);
+            taskRepository.save(task);
+        }
+
+        // 4. 변경된 순서의 할 일 ID 목록 생성
+        List<Long> updatedTaskIds = tasks.stream()
+                .map(Task::getId)
+                .collect(Collectors.toList());
+
+        return new TaskResponse.EditTaskOrderRes(updatedTaskIds);
     }
 }

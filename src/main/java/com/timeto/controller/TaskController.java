@@ -99,4 +99,20 @@ public class TaskController {
         return ApiResponse.success("할 일이 완료되었습니다.", response);
     }
 
+    @PatchMapping("/order")
+    @Operation(summary = "할 일 순서 변경", description = "진행 중인 할 일의 순서를 변경합니다.")
+    public ApiResponse<TaskResponse.EditTaskOrderRes> editTaskOrder(
+            @Valid @RequestBody TaskRequest.EditTaskOrderReq request,
+            Authentication authentication) {
+
+        // 현재 인증된 사용자 정보 가져오기
+        CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
+        Long userId = oAuth2User.getId();
+
+        // 서비스 호출하여 할 일 순서 변경
+        TaskResponse.EditTaskOrderRes response = taskService.editTaskOrder(request, userId);
+
+        return ApiResponse.success("할 일 순서가 변경되었습니다.", response);
+    }
+
 }
