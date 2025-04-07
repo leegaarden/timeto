@@ -65,7 +65,9 @@ public class Task extends BaseEntity {
         this.memo = memo;
     }
 
-    public void updateDone() {this.done = true;}
+    public void updateDone() { this.done = true; }
+
+    public void updateOrder(Integer order) { this.displayOrder = order; }
 
     @Builder
     public Task(Folder folder, String name, Level level, LocalTime time, String memo, Boolean done, Integer displayOrder) {

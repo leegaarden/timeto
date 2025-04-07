@@ -52,4 +52,14 @@ public class TaskRequest {
             @Schema(description = "메모 (선택)", example = "코카콜라 마스터피스 캠페인", nullable = true)
             String memo
     ) {}
+
+    @Schema(title = "TASK_REQ_03 : 할 일 순서 변경 요청")
+    public record EditTaskOrderReq (
+
+            @Schema(description = "순서 변경하려는 할 일 아이디", example = "1")
+            Long taskId,
+
+            @Schema(description = "변경하려는 위치(순서): 0부터 시작", example = "2")
+            int changeOrder
+    ) {}
 }
