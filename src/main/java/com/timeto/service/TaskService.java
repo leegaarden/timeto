@@ -117,6 +117,9 @@ public class TaskService {
         Task task = taskRepository.findById(request.taskId())
                 .orElseThrow(() -> new GeneralException(ErrorCode.TASK_NOT_FOUND));
 
+        // 완료된 할 일인지 학인
+        if(task.getDone()) {throw new GeneralException(ErrorCode.INVALID_DONE_CHANGES);}
+
         // 변경 사항 확인 플래그
         boolean isChanged = false;
 
@@ -170,6 +173,7 @@ public class TaskService {
         );
     }
 
+    // 할 일 삭제
     public TaskResponse.DeleteTaskRes deleteTask (Long taskId, Long userId) {
 
         // 사용자 조회

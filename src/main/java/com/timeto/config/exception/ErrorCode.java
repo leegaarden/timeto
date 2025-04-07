@@ -27,7 +27,8 @@ public enum ErrorCode {
 
     // 할 일 에러 
     TASK_NOT_FOUND(HttpStatus.NOT_FOUND, "T001", "할 일를 찾을 수 없습니다."),
-    NO_CHANGES_DETECTED(HttpStatus.BAD_REQUEST, "T002","변경된 내용이 없습니다");
+    NO_CHANGES_DETECTED(HttpStatus.BAD_REQUEST, "T002","변경된 내용이 없습니다"),
+    INVALID_DONE_CHANGES(HttpStatus.BAD_REQUEST, "T003", "완료된 할 일은 수정할 수 없습니다.");
 
     private final HttpStatus status;
     private final String code;
