@@ -101,6 +101,7 @@ public class FolderService {
 
         // 응답 생성
         return new FolderResponse.GetFolderRes(
+                goal.getColor().name(),
                 goal.getName(),
                 folder.getName(),
                 progressTasks.size(),
