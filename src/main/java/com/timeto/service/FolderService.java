@@ -12,9 +12,12 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 @Service
@@ -113,13 +116,28 @@ public class FolderService {
 
     // 할 일 정보 생성
     private FolderResponse.TaskInfo createTaskInfo(Task task) {
-        // 날짜 정보 (타임블록 관련 로직이 없으므로 "미정"으로 설정)
         String date = "미정";
 
-        // 타임블록 관련 로직이 구현되면 여기서 처리
-        // 예: timeBlockRepository.findByTaskId(task.getId())
-        //     .map(timeBlock -> timeBlock.getDate().format(DateTimeFormatter.ofPattern("MM/dd")))
-        //     .orElse("미정");
+        // 타임블록이 있는 경우, 날짜 정보 포맷팅
+        TimeBlock timeBlock = task.getTimeBlock();
+        if (timeBlock != null) {
+            // 날짜를 확인
+            LocalDate blockDate = timeBlock.getDate();
+            if (blockDate != null) {
+                LocalDate today = LocalDate.now();
+                LocalDate tomorrow = today.plusDays(1);
+
+                if (blockDate.isEqual(today)) {
+                    date = "오늘";
+                } else if (blockDate.isEqual(tomorrow)) {
+                    date = "내일";
+                } else {
+                    // 그 외의 날짜는 "M/d(E)" 형식으로 포맷팅 (예: 3/29(토))
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d(E)", Locale.KOREAN);
+                    date = blockDate.format(formatter);
+                }
+            }
+        }
 
         return new FolderResponse.TaskInfo(
                 task.getName(),
