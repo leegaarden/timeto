@@ -70,7 +70,7 @@ public class Task extends BaseEntity {
     public void updateOrder(Integer order) { this.displayOrder = order; }
 
     @Builder
-    public Task(Folder folder, String name, Level level, LocalTime time, String memo, Boolean done, Integer displayOrder) {
+    public Task(Folder folder, String name, Level level, LocalTime time, String memo, Boolean done, Integer displayOrder, TimeBlock timeBlock) {
         this.folder = folder;
         this.name = name;
         this.level = level;
@@ -78,5 +78,6 @@ public class Task extends BaseEntity {
         this.memo = memo;
         this.done = done != null ? done : false;
         this.displayOrder = displayOrder;
+        this.timeBlock = timeBlock;
     }
 }

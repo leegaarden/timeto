@@ -22,6 +22,9 @@ public class FolderResponse {
     @Schema(title = "FOLDER_RES_02 : 폴더 및 내부 할 일 조회 응답")
     public record GetFolderRes (
 
+            @Schema(description = "목표 색상", example = "RED01")
+            String color,
+
             @Schema(description = "목표 이름", example = "광고학 강의 레포트")
             String goalName,
 
@@ -61,11 +64,24 @@ public class FolderResponse {
 
     @Schema(title = "FOLDER_RES_O3 : 목표 내 폴더만 조회 응답")
     public record GetFolderOnlyRes (
+
+            @Schema(description = "목표 색상", example = "RED01")
+            String color,
+
             @Schema(description = "목표 이름", example = "사이드 프로젝트")
             String goalName,
 
-            @Schema(description = "폴더 이름 리스트")
-            List<String> folderNames
+            @Schema(description = "폴더 리스트")
+            List<FolderInfo> folders
+    ) {}
+
+    @Schema(title = "FOLDER_RES_03-1 : 폴더 정보")
+    public record FolderInfo (
+            @Schema(description = "폴더 아이디", example = "1")
+            Long folderId,
+
+            @Schema(description = "폴더 이름", example = "기획 및 설계")
+            String folderName
     ) {}
 
     @Schema(title = "FOLDER_RES_04 : 폴더 이름 변경 응답")
