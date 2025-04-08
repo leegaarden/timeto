@@ -14,8 +14,8 @@ public class SwaggerConfig {
     public OpenAPI openAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("TimeTO API")
-                        .description("TimeTO 시간 관리 서비스 API 문서")
+                        .title("TimeTo API")
+                        .description("TimeTo 시간 관리 서비스 API 문서")
                         .version("v1.0.0"))
                 .components(new Components()
                         .addSecuritySchemes("cookieAuth", new SecurityScheme()
