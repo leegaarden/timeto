@@ -162,12 +162,14 @@ public class FolderService {
         List<Folder> folders = folderRepository.findByGoalIdOrderByDisplayOrderAsc(goalId);
 
         // 폴더 이름 리스트 추출
-        List<String> folderNames = folders.stream()
-                .map(Folder::getName)
-                .collect(Collectors.toList());
+        List<FolderResponse.FolderInfo> folderInfos = folders.stream()
+                .map(folder -> new FolderResponse.FolderInfo(
+                        folder.getId(), folder.getName()
+                ))
+                .toList();
 
         // 응답 생성
-        return new FolderResponse.GetFolderOnlyRes(goal.getName(), folderNames);
+        return new FolderResponse.GetFolderOnlyRes(goal.getColor().name(), goal.getName(), folderInfos);
     }
 
     // 폴더 이름 변경
