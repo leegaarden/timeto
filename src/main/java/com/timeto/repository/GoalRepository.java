@@ -14,4 +14,7 @@ public interface GoalRepository extends JpaRepository<Goal, Long> {
 
     // 목표 이름으로 존재 여부 확인
     boolean existsByNameAndUserId(String name, Long userId);
+
+    // 최신순으로 정렬된 목표 목록 조회
+    List<Goal> findByUserIdOrderByCreatedAtDesc(Long userId);
 }

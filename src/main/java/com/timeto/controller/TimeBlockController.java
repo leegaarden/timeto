@@ -10,10 +10,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/api/v1/time-blocks")
@@ -38,4 +37,20 @@ public class TimeBlockController {
 
         return ApiResponse.success("타임 블럭과 할 일이 생성되었습니다.", response);
     }
+
+    @GetMapping("/{date}")
+    @Operation(summary = "TIME_BLOCK_API_02 : 타임 블럭 조회", description = "해당 날짜의 타임 블럭을 조회합니다.")
+    public ApiResponse<TimeBlockResponse.GetTimeBlockRes> getTimeBlock (
+            @PathVariable LocalDate date,
+            Authentication authentication) {
+
+        // 현재 인증된 사용자 정보 가져오기
+        CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
+        Long userId = oAuth2User.getId();
+
+        TimeBlockResponse.GetTimeBlockRes response = timeBlockService.getTimeBlock(date, userId);
+
+        return ApiResponse.success("타임 블럭이 조회됐습니다.", response);
+    }
+
 }

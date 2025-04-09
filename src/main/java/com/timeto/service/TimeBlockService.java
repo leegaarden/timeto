@@ -18,8 +18,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -92,5 +94,27 @@ public class TimeBlockService {
 
         // 응답 생성
         return new TimeBlockResponse.CreateTimeBLockRes(task.getId(), task.getName());
+    }
+
+    // 타임 블럭 조회
+    public TimeBlockResponse.GetTimeBlockRes getTimeBlock (LocalDate date, Long userId) {
+        // 사용자 조회
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND));
+
+        List<Task> tasks = taskRepository.findByDateAndUserId(date, userId);
+        List<TimeBlockResponse.TaskInfo> taskInfos = tasks.stream()
+                .map(task -> new TimeBlockResponse.TaskInfo(
+                        task.getId(),
+                        task.getFolder().getGoal().getName(),
+                        task.getFolder().getGoal().getColor().name(),
+                        task.getName(),
+                        task.getDone(),
+                        task.getTimeBlock().getStartTime(),
+                        task.getTimeBlock().getEndTime()
+                ))
+                .toList();
+
+        return new TimeBlockResponse.GetTimeBlockRes(date, taskInfos);
     }
 }

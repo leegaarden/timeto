@@ -69,8 +69,8 @@ public class GoalService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND));
 
-        // 사용자의 모든 목표 조회
-        List<Goal> goals = goalRepository.findByUserId(userId);
+        // 사용자의 모든 목표 조회 최신순으로
+        List<Goal> goals = goalRepository.findByUserIdOrderByCreatedAtDesc(userId);
 
         // 각 목표에 대한 폴더 및 할 일 정보를 포함한 응답 생성
         List<GoalResponse.GoalFolder> goalsFoldersList = goals.stream()
