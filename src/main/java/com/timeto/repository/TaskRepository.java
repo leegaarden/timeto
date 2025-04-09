@@ -43,6 +43,7 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     List<Long> findTimeBlockIdsByTaskIds(List<Long> taskIds);
 
     // 특정 사용자의 날짜별 할 일 조회
-    @Query("SELECT t FROM Task t JOIN t.timeBlock tb JOIN t.folder f WHERE tb.date = :date AND t.done = :done AND f.user.id = :userId")
+    @Query("SELECT t FROM Task t JOIN t.timeBlock tb JOIN t.folder f JOIN f.goal g WHERE tb.date = :date AND g.user.id = :userId")
     List<Task> findByDateAndUserId(LocalDate date, Long userId);
+
 }
