@@ -12,8 +12,11 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -25,7 +28,7 @@ public class TaskService {
     private final TaskRepository taskRepository;
     private final FolderRepository folderRepository;
     private final GoalRepository goalRepository;
-    private final TimeBlockRepository timeBlockRepository;
+    private final FolderService folderService;
 
     // 할 일 생성
     @Transactional
@@ -277,4 +280,70 @@ public class TaskService {
 
         return new TaskResponse.EditTaskOrderRes(updatedTaskIds);
     }
-}
+
+    // 진행 중인 할 일만 조회
+    @Transactional()
+    public TaskResponse.GetOnlyProgressTaskRes getOnlyProgressTask(Long folderId, Long userId) {
+
+        // 사용자 조회
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND));
+
+        // 폴더 조회
+        Folder folder = folderRepository.findById(folderId)
+                .orElseThrow(() -> new GeneralException(ErrorCode.FOLDER_NOT_FOUND));
+
+        Goal goal = folder.getGoal();
+        if (goal == null) {throw new GeneralException(ErrorCode.GOAL_NOT_FOUND);}
+
+        // 진행 중인 할 일 목록 조회 (정렬 없이)
+        List<Task> progressTasks = taskRepository.findByFolderIdAndDone(folderId, false);
+
+        // 난이도(상-중-하) 및 생성일 기준으로 정렬
+        progressTasks = folderService.sortTasksByLevelAndCreatedDate(progressTasks);
+        // 할 일 정보 변환
+        List<TaskResponse.TaskInfo> progressTaskInfos = progressTasks.stream()
+                .map(this::createTaskInfo)
+                .collect(Collectors.toList());
+
+        // 응답 생성
+        return new TaskResponse.GetOnlyProgressTaskRes(
+                goal.getColor().name(),
+                folder.getName(),
+                progressTasks.size(),
+                progressTaskInfos
+        );
+    }
+    // 할 일 정보 생성
+    public TaskResponse.TaskInfo createTaskInfo(Task task) {
+        String date = "미정";
+
+        // 타임블록이 있는 경우, 날짜 정보 포맷팅
+        TimeBlock timeBlock = task.getTimeBlock();
+        if (timeBlock != null) {
+            // 날짜를 확인
+            LocalDate blockDate = timeBlock.getDate();
+            if (blockDate != null) {
+                LocalDate today = LocalDate.now();
+                LocalDate tomorrow = today.plusDays(1);
+
+                if (blockDate.isEqual(today)) {
+                    date = "오늘";
+                } else if (blockDate.isEqual(tomorrow)) {
+                    date = "내일";
+                } else {
+                    // 그 외의 날짜는 "M/d(E)" 형식으로 포맷팅 (예: 3/29(토))
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d(E)", Locale.KOREAN);
+                    date = blockDate.format(formatter);
+                }
+            }
+        }
+
+        return new TaskResponse.TaskInfo(
+                task.getName(),
+                task.getLevel().name(),
+                task.getTime().getHour(),
+                task.getTime().getMinute(),
+                date
+        );
+    }}

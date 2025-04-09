@@ -115,7 +115,7 @@ public class FolderService {
     }
 
     // 할 일 정보 생성
-    private FolderResponse.TaskInfo createTaskInfo(Task task) {
+    public FolderResponse.TaskInfo createTaskInfo(Task task) {
         String date = "미정";
 
         // 타임블록이 있는 경우, 날짜 정보 포맷팅
@@ -149,7 +149,7 @@ public class FolderService {
     }
 
     // 할 일을 난이도(상-중-하) 및 생성일 기준으로 정렬하는 메서드
-    private List<Task> sortTasksByLevelAndCreatedDate(List<Task> tasks) {
+    public List<Task> sortTasksByLevelAndCreatedDate(List<Task> tasks) {
         return tasks.stream()
                 .sorted(Comparator
                         // 먼저 난이도로 정렬 (HIGH -> MIDDLE -> LOW)

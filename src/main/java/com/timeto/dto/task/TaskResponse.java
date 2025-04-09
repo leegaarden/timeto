@@ -1,5 +1,6 @@
 package com.timeto.dto.task;
 
+import com.timeto.dto.folder.FolderResponse;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.List;
@@ -74,5 +75,39 @@ public class TaskResponse {
 
             @Schema(description = "변경된 순서의 할 일 아이디", example = "[14, 11, 12, 13]")
             List<Long> taskIds
+    ) {}
+
+    @Schema(title = "TASK_RES_06 : 진행 중인 할 일만 조회 응답")
+    public record GetOnlyProgressTaskRes (
+
+            @Schema(description = "목표 색상", example = "RED01")
+            String color,
+
+            @Schema(description = "폴더 이름", example = "자료 조사")
+            String folderName,
+
+            @Schema(description = "진행 중인 할 일의 개수", example = "5")
+            int progressCount,
+
+            @Schema(description = "진행 중인 할 일 정보")
+            List<TaskInfo> progressTasks
+    ) {}
+
+    @Schema(title = "TASK_RES_06-1 : 할 일 정보")
+    public record TaskInfo (
+            @Schema(description = "할 일 이름", example = "경쟁사 캠페인 비교")
+            String taskName,
+
+            @Schema(description = "중요도", example = "HIGH")
+            String level,
+
+            @Schema(description = "시간", example = "1")
+            int hour,
+
+            @Schema(description = "분", example = "10")
+            int minute,
+
+            @Schema(description = "타임 블럭에 넣은 날짜", example = "미정")
+            String date
     ) {}
 }
