@@ -100,7 +100,7 @@ public class TaskController {
     }
 
     @PatchMapping("/order")
-    @Operation(summary = "할 일 순서 변경", description = "진행 중인 할 일의 순서를 변경합니다.")
+    @Operation(summary = "TASK_API_06 : 할 일 순서 변경", description = "진행 중인 할 일의 순서를 변경합니다.")
     public ApiResponse<TaskResponse.EditTaskOrderRes> editTaskOrder(
             @Valid @RequestBody TaskRequest.EditTaskOrderReq request,
             Authentication authentication) {
@@ -114,5 +114,21 @@ public class TaskController {
 
         return ApiResponse.success("할 일 순서가 변경되었습니다.", response);
     }
+
+    @GetMapping("/progress/{folderId}")
+    @Operation(summary = "TASK_API_07 : 진행 중인 할 일만 조회", description = "진행 중인 할 일만 조회합니다.")
+    public ApiResponse<TaskResponse.GetOnlyProgressTaskRes> getOnlyProgressTask (
+            @PathVariable Long folderId,
+            Authentication authentication
+    ) {
+        // 현재 인증된 사용자 정보 가져오기
+        CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
+        Long userId = oAuth2User.getId();
+
+        TaskResponse.GetOnlyProgressTaskRes response = taskService.getOnlyProgressTask(folderId, userId);
+
+        return ApiResponse.success("진행 중인 할 일만 조회됐습니다.", response);
+    }
+
 
 }
