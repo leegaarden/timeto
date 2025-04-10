@@ -26,7 +26,13 @@ public class CorsConfig {
                 "https://localhost:5173",
                 "https://3.39.38.237",
                 "https://3.39.38.237:8080",
-                "https://3.39.38.237:5173"
+                "https://3.39.38.237:5173",
+
+                // 도메인
+                "http://timeto.digital",
+                "https://timeto.digital",
+                "http://www.timeto.digital",
+                "https://www.timeto.digital"
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
