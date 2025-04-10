@@ -1,6 +1,7 @@
 package com.timeto.config;
 
 import com.timeto.oauth.CustomOAuth2UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,15 +37,22 @@ public class SecurityConfig {
                                 "/webjars/**",
                                 "/error").permitAll()
                         .anyRequest().authenticated())
+                .exceptionHandling(exceptions -> exceptions
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            // 인증되지 않은 사용자에게 401 응답 반환
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            response.setContentType("application/json");
+                            response.getWriter().write("{\"status\":\"error\",\"message\":\"인증이 필요합니다.\",\"code\":\"UNAUTHORIZED\"}");
+                        })
+                )
                 .oauth2Login(oauth2 -> oauth2
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(customOAuth2UserService))
                         .successHandler((request, response, authentication) -> {
-                            // 로그인 성공 시 처리 로직
-                            response.sendRedirect("/swagger-ui.html");
+                            // 로그인 성공 시 처리 로직 (이전과 동일)
+                            response.sendRedirect("http://localhost:5173/goal");
                         }));
 
         return http.build();
     }
-
 }
