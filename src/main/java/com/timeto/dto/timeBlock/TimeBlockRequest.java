@@ -33,4 +33,13 @@ public class TimeBlockRequest {
             @Schema(description = "중요도", example = "HIGH")
             String level
     ) {}
+
+    @Schema(title = "TIME_BLOCK_REQ_02 : 타임 블럭 할 일 불러오기 요청")
+    public record LoadTaskToTimeBlockReq (
+            @Schema(description = "날짜")
+            LocalDate date,
+
+            @Schema(description = "할 일 ID", example = "1")
+            Long taskId
+    ) {}
 }

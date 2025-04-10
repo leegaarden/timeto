@@ -32,7 +32,8 @@ public enum ErrorCode {
     INVALID_DONE(HttpStatus.BAD_REQUEST, "T004", "이미 완료 처리된 할 일입니다."),
 
     // 타임 블럭 에러
-    TIME_BLOCK_OVERLAP(HttpStatus.CONFLICT, "TB001", "해당 시간에 이미 타임 블럭이 존재합니다");
+    TIME_BLOCK_OVERLAP(HttpStatus.CONFLICT, "TB001", "해당 시간에 이미 타임 블럭이 존재합니다"),
+    TASK_ALREADY_IN_TIME_BLOCK(HttpStatus.CONFLICT, "TB002", "이미 타임 블럭에 등록된 할 일입니다");
 
     private final HttpStatus status;
     private final String code;
