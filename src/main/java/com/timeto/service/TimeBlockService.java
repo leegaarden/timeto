@@ -206,4 +206,30 @@ public class TimeBlockService {
                 endTime
         );
     }
+
+    // 타임 블럭 삭제
+    @Transactional
+    public Long deleteTimeBlock(Long timeBlockId, Long userId) {
+
+        // 사용자 조회
+        User user = userRepository.findByIdAndActiveTrue(userId)
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_DEACTIVATED));
+
+        // 타임 블럭 조회
+        TimeBlock timeBlock = timeBlockRepository.findById(timeBlockId)
+                .orElseThrow(() -> new GeneralException(ErrorCode.TIME_BLOCK_NOT_FOUND));
+
+        // 타임 블럭에 연결된 할 일 조회
+        Task task = taskRepository.findByTimeBlockId(timeBlockId)
+                .orElseThrow(() -> new GeneralException(ErrorCode.TASK_NOT_FOUND));
+
+        // 할 일 ID
+        Long taskId = task.getId();
+
+        // 할 일 삭제 (타임 블럭도 cascade 설정에 의해 함께 삭제됨)
+        taskRepository.delete(task);
+
+        // 삭제된 할 일 ID 반환
+        return taskId;
+    }
 }

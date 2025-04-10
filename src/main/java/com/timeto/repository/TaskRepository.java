@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface TaskRepository extends JpaRepository<Task, Long> {
@@ -45,5 +46,9 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     // 특정 사용자의 날짜별 할 일 조회
     @Query("SELECT t FROM Task t JOIN t.timeBlock tb JOIN t.folder f JOIN f.goal g WHERE tb.date = :date AND g.user.id = :userId")
     List<Task> findByDateAndUserId(LocalDate date, Long userId);
+
+    // 타임 블럭 ID로 할 일 조회
+    Optional<Task> findByTimeBlockId(Long timeBlockId);
+
 
 }

@@ -34,7 +34,8 @@ public enum ErrorCode {
 
     // 타임 블럭 에러
     TIME_BLOCK_OVERLAP(HttpStatus.CONFLICT, "TB001", "해당 시간에 이미 타임 블럭이 존재합니다"),
-    TASK_ALREADY_IN_TIME_BLOCK(HttpStatus.CONFLICT, "TB002", "이미 타임 블럭에 등록된 할 일입니다");
+    TASK_ALREADY_IN_TIME_BLOCK(HttpStatus.CONFLICT, "TB002", "이미 타임 블럭에 등록된 할 일입니다"),
+    TIME_BLOCK_NOT_FOUND(HttpStatus.NOT_FOUND, "TB003", "해당 타임 블럭을 찾을 수 없습니다");
 
     private final HttpStatus status;
     private final String code;
