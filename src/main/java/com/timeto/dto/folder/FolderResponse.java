@@ -46,6 +46,10 @@ public class FolderResponse {
 
     @Schema(title = "FOLDER_RES_02-1 : 할 일 정보")
     public record TaskInfo (
+
+            @Schema(description = "할 일 아이디", example = "1")
+            Long taskId,
+
             @Schema(description = "할 일 이름", example = "경쟁사 캠페인 비교")
             String taskName,
 

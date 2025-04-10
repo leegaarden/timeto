@@ -140,6 +140,7 @@ public class FolderService {
         }
 
         return new FolderResponse.TaskInfo(
+                task.getId(),
                 task.getName(),
                 task.getLevel().name(),
                 task.getTime().getHour(),
