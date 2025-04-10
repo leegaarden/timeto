@@ -54,4 +54,27 @@ public class TimeBlockResponse {
             @Schema(description = "종료 시간", example = "8:00")
             LocalTime endTime
     ) {}
+
+    @Schema(title = "TIME_BLOCK_RES_03 : 타임 블럭 할 일 불러오기 응답")
+    public record GetTaskRes (
+            @Schema(description = "할 일 아이디", example = "1")
+            Long taskId,
+
+            @Schema(description = "목표 이름", example = "사이드 프로젝트")
+            String goalName,
+
+            @Schema(description = "목표 색상", example = "RED01")
+            String color,
+
+            @Schema(description = "할 일 이름", example = "경쟁사 캠페인 비교")
+            String taskName,
+
+            @JsonFormat(pattern = "H:mm", shape = JsonFormat.Shape.STRING)
+            @Schema(description = "시작 시간", example = "6:00")
+            LocalTime startTime,
+
+            @JsonFormat(pattern = "H:mm", shape = JsonFormat.Shape.STRING)
+            @Schema(description = "종료 시간", example = "8:00")
+            LocalTime endTime
+    ) {}
 }

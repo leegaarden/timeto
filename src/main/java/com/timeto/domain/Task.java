@@ -2,10 +2,7 @@ package com.timeto.domain;
 
 import com.timeto.domain.enums.Level;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalTime;
 import java.util.List;
@@ -47,6 +44,7 @@ public class Task extends BaseEntity {
     // 타임블록과 일대일 관계
     @OneToOne(cascade = CascadeType.REMOVE, orphanRemoval = true)
     @JoinColumn(name = "time_block_id")
+    @Setter
     private TimeBlock timeBlock;
 
     public void updateName(String name) {

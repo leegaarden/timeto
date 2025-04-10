@@ -2,10 +2,7 @@ package com.timeto.service;
 
 import com.timeto.config.exception.ErrorCode;
 import com.timeto.config.exception.GeneralException;
-import com.timeto.domain.Folder;
-import com.timeto.domain.Task;
-import com.timeto.domain.TimeBlock;
-import com.timeto.domain.User;
+import com.timeto.domain.*;
 import com.timeto.domain.enums.Level;
 import com.timeto.dto.timeBlock.TimeBlockRequest;
 import com.timeto.dto.timeBlock.TimeBlockResponse;
@@ -32,12 +29,13 @@ public class TimeBlockService {
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
 
+    // 타임 블럭 및 할 일 생성
     @Transactional
     public TimeBlockResponse.CreateTimeBLockRes createTimeBlock(TimeBlockRequest.CreateTimeBlockReq request, Long userId) {
 
         // 사용자 조회
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND));
+        User user = userRepository.findByIdAndActiveTrue(userId)
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_DEACTIVATED));
 
         // 폴더 조회
         Folder folder = folderRepository.findById(request.folderId())
@@ -98,9 +96,10 @@ public class TimeBlockService {
 
     // 타임 블럭 조회
     public TimeBlockResponse.GetTimeBlockRes getTimeBlock (LocalDate date, Long userId) {
+
         // 사용자 조회
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND));
+        User user = userRepository.findByIdAndActiveTrue(userId)
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_DEACTIVATED));
 
         List<Task> tasks = taskRepository.findByDateAndUserId(date, userId);
         List<TimeBlockResponse.TaskInfo> taskInfos = tasks.stream()
@@ -116,5 +115,95 @@ public class TimeBlockService {
                 .toList();
 
         return new TimeBlockResponse.GetTimeBlockRes(date, taskInfos);
+    }
+
+    // 타임 블럭 할 일 불러오기
+    @Transactional
+    public TimeBlockResponse.GetTaskRes loadTaskToTimeBlock(TimeBlockRequest.LoadTaskToTimeBlockReq request, Long userId) {
+
+        // 사용자 조회
+        User user = userRepository.findByIdAndActiveTrue(userId)
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_DEACTIVATED));
+
+        // 할 일 조회
+        Task task = taskRepository.findById(request.taskId())
+                .orElseThrow(() -> new GeneralException(ErrorCode.TASK_NOT_FOUND));
+
+        // 이미 타임 블럭에 연결된 할 일인지 확인
+        if (task.getTimeBlock() != null) {
+            throw new GeneralException(ErrorCode.TASK_ALREADY_IN_TIME_BLOCK);
+        }
+
+        // 할 일의 폴더와 목표 조회
+        Folder folder = task.getFolder();
+        Goal goal = folder.getGoal();
+
+        // 요청된 날짜 사용
+        LocalDate date = request.date();
+
+        // 해당 날짜의 마지막 타임블록 조회
+        LocalTime startTime;
+        List<TimeBlock> existingTimeBlocks = timeBlockRepository.findByDateOrderByEndTimeDesc(date);
+
+        if (existingTimeBlocks.isEmpty()) {
+            // 해당 날짜에 타임블록이 없으면 기본 시작 시간 설정 (오전 5시)
+            startTime = LocalTime.of(5, 0);
+        } else {
+            // 마지막 타임블록의 종료 시간을 새 타임블록의 시작 시간으로 설정
+            TimeBlock lastTimeBlock = existingTimeBlocks.get(0);
+            startTime = lastTimeBlock.getEndTime();
+        }
+
+        // 할 일의 소요 시간 확인 (또는 기본 시간 설정)
+        LocalTime taskTime = task.getTime() != null ? task.getTime() : LocalTime.of(1, 0); // 기본 1시간
+
+        // 종료 시간 계산
+        int hours = taskTime.getHour();
+        int minutes = taskTime.getMinute();
+
+        // 시작 시간에 할 일 소요 시간을 더해 종료 시간 계산
+        LocalTime endTime = startTime.plusHours(hours).plusMinutes(minutes);
+
+        // 종료 시간이 24시를 넘어가는지 확인
+        if (endTime.isAfter(LocalTime.of(23, 59))) {
+            throw new GeneralException(ErrorCode.TIME_BLOCK_OVERLAP);
+        }
+
+        // 요청 시간에 이미 타임 블럭이 존재하는지 확인
+        boolean hasOverlap = timeBlockRepository.existsByDateAndTimeOverlap(
+                date,
+                startTime,
+                endTime
+        );
+
+        if (hasOverlap) {
+            throw new GeneralException(ErrorCode.TIME_BLOCK_OVERLAP);
+        }
+
+        // 타임 블럭 생성
+        TimeBlock timeBlock = TimeBlock.builder()
+                .date(date)
+                .startTime(startTime)
+                .endTime(endTime)
+                .build();
+
+        // 타임 블럭 저장
+        timeBlockRepository.save(timeBlock);
+
+        // 할 일에 타임 블럭 연결
+        task.setTimeBlock(timeBlock);
+
+        // 할 일 저장
+        taskRepository.save(task);
+
+        // 응답 생성
+        return new TimeBlockResponse.GetTaskRes(
+                task.getId(),
+                goal.getName(),
+                goal.getColor().name(),
+                task.getName(),
+                startTime,
+                endTime
+        );
     }
 }
