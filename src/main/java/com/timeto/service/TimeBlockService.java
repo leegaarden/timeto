@@ -34,8 +34,8 @@ public class TimeBlockService {
     public TimeBlockResponse.CreateTimeBLockRes createTimeBlock(TimeBlockRequest.CreateTimeBlockReq request, Long userId) {
 
         // 사용자 조회
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND));
+        User user = userRepository.findByIdAndActiveTrue(userId)
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_DEACTIVATED));
 
         // 폴더 조회
         Folder folder = folderRepository.findById(request.folderId())
@@ -96,9 +96,10 @@ public class TimeBlockService {
 
     // 타임 블럭 조회
     public TimeBlockResponse.GetTimeBlockRes getTimeBlock (LocalDate date, Long userId) {
+
         // 사용자 조회
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND));
+        User user = userRepository.findByIdAndActiveTrue(userId)
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_DEACTIVATED));
 
         List<Task> tasks = taskRepository.findByDateAndUserId(date, userId);
         List<TimeBlockResponse.TaskInfo> taskInfos = tasks.stream()
@@ -121,8 +122,8 @@ public class TimeBlockService {
     public TimeBlockResponse.GetTaskRes loadTaskToTimeBlock(TimeBlockRequest.LoadTaskToTimeBlockReq request, Long userId) {
 
         // 사용자 조회
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND));
+        User user = userRepository.findByIdAndActiveTrue(userId)
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_DEACTIVATED));
 
         // 할 일 조회
         Task task = taskRepository.findById(request.taskId())

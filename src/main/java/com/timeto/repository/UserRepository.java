@@ -17,4 +17,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     // 활성 상태인 사용자를 이메일로 찾기
     Optional<User> findByEmailAndActive(String email, boolean active);
+
+    // 활성 상태인 유저 조회
+    Optional<User> findByIdAndActiveTrue(Long id);
+
 }
