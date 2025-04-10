@@ -53,4 +53,35 @@ public class TimeBlockController {
         return ApiResponse.success("타임 블럭이 조회됐습니다.", response);
     }
 
+    @PostMapping("/load")
+    @Operation(summary = "TIME_BLOCK_API_03 : 타임 블럭에 할 일 불러오기", description = "기존 할 일을 선택하여 타임 블럭에 추가합니다.")
+    public ApiResponse<TimeBlockResponse.GetTaskRes> loadTaskToTimeBlock(
+            @Valid @RequestBody TimeBlockRequest.LoadTaskToTimeBlockReq request,
+            Authentication authentication) {
+
+        // 현재 인증된 사용자 정보 가져오기
+        CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
+        Long userId = oAuth2User.getId();
+
+        // 서비스 호출하여 타임 블럭에 할 일 불러오기
+        TimeBlockResponse.GetTaskRes response = timeBlockService.loadTaskToTimeBlock(request, userId);
+
+        return ApiResponse.success("할 일이 타임 블럭에 추가되었습니다.", response);
+    }
+
+    @DeleteMapping("/{timeBlockId}")
+    @Operation(summary = "TIME_BLOCK_API_04 : 타임 블럭 삭제", description = "타임 블럭과 연결된 할 일을 함께 삭제합니다.")
+    public ApiResponse<Long> deleteTimeBlock(
+            @PathVariable Long timeBlockId,
+            Authentication authentication) {
+
+        // 현재 인증된 사용자 정보 가져오기
+        CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
+        Long userId = oAuth2User.getId();
+
+        // 서비스 호출하여 타임 블럭 삭제하고 할 일 ID 반환
+        Long deletedTaskId = timeBlockService.deleteTimeBlock(timeBlockId, userId);
+
+        return ApiResponse.success("타임 블럭과 할 일이 삭제되었습니다.", deletedTaskId);
+    }
 }

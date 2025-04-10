@@ -32,8 +32,8 @@ public class GoalService {
     public GoalResponse.CreateGoalRes createGoal(GoalRequest.CreateGoalReq request, Long userId) {
 
         // 사용자 조회
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND));
+        User user = userRepository.findByIdAndActiveTrue(userId)
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_DEACTIVATED));
 
         // 이름 중복 검사
         if (goalRepository.existsByNameAndUserId(request.goalName(), userId)) {
@@ -66,8 +66,8 @@ public class GoalService {
     public GoalResponse.GetUserGoalRes getUserGoals(Long userId) {
 
         // 사용자 조회
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND));
+        User user = userRepository.findByIdAndActiveTrue(userId)
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_DEACTIVATED));
 
         // 사용자의 모든 목표 조회 최신순으로
         List<Goal> goals = goalRepository.findByUserId(userId);
@@ -111,8 +111,8 @@ public class GoalService {
     public GoalResponse.GetGoalOnlyRes getUserGoalsOnly(Long userId) {
 
         // 사용자 조회
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND));
+        User user = userRepository.findByIdAndActiveTrue(userId)
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_DEACTIVATED));
 
         // 사용자의 모든 목표 조회
         List<Goal> goals = goalRepository.findByUserId(userId);
@@ -135,8 +135,8 @@ public class GoalService {
     public GoalResponse.EditGoalNameRes editGoalName(GoalRequest.EditGoalNameReq request, Long userId) {
 
         // 사용자 조회
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND));
+        User user = userRepository.findByIdAndActiveTrue(userId)
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_DEACTIVATED));
 
         // 목표 조회
         Goal goal = goalRepository.findById(request.goalId())
@@ -165,8 +165,8 @@ public class GoalService {
     public GoalResponse.EditGoalColorRes editGoalColor(GoalRequest.EditGoalColorReq request, Long userId) {
 
         // 사용자 조회
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND));
+        User user = userRepository.findByIdAndActiveTrue(userId)
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_DEACTIVATED));
 
         // 목표 조회
         Goal goal = goalRepository.findById(request.goalId())
@@ -190,8 +190,8 @@ public class GoalService {
     public GoalResponse.DeleteGoalRes deleteGoal(Long goalId, Long userId) {
 
         // 사용자 조회
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND));
+        User user = userRepository.findByIdAndActiveTrue(userId)
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_DEACTIVATED));
 
         // 목표 조회
         Goal goal = goalRepository.findById(goalId)

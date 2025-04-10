@@ -33,8 +33,8 @@ public class FolderService {
     public FolderResponse.CreateFolderRes createFolder (FolderRequest.CreateFolderReq request, Long userId) {
 
         // 사용자 조회
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND));
+        User user = userRepository.findByIdAndActiveTrue(userId)
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_DEACTIVATED));
 
         // 목표 조회
         Goal goal = goalRepository.findById(request.goalId())
@@ -73,8 +73,8 @@ public class FolderService {
     public FolderResponse.GetFolderRes getFolder(Long folderId, Long userId) {
 
         // 사용자 조회
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND));
+        User user = userRepository.findByIdAndActiveTrue(userId)
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_DEACTIVATED));
 
         // 폴더 조회
         Folder folder = folderRepository.findById(folderId)
@@ -116,6 +116,7 @@ public class FolderService {
 
     // 할 일 정보 생성
     public FolderResponse.TaskInfo createTaskInfo(Task task) {
+
         String date = "미정";
 
         // 타임블록이 있는 경우, 날짜 정보 포맷팅
@@ -170,8 +171,8 @@ public class FolderService {
     public FolderResponse.GetFolderOnlyRes getFoldersByGoal(Long goalId, Long userId) {
 
         // 사용자 조회
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND));
+        User user = userRepository.findByIdAndActiveTrue(userId)
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_DEACTIVATED));
 
         // 목표 조회
         Goal goal = goalRepository.findById(goalId)
@@ -196,8 +197,8 @@ public class FolderService {
     public FolderResponse.EditFolderNameRes editFolderName (FolderRequest.EditFolderNameReq request, Long userId) {
 
         // 사용자 조회
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND));
+        User user = userRepository.findByIdAndActiveTrue(userId)
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_DEACTIVATED));
 
         // 목표 조회
         Folder folder = folderRepository.findById(request.folderId())
@@ -225,8 +226,8 @@ public class FolderService {
     public FolderResponse.DeleteFolderRes deleteFolder (Long folderId, Long userId) {
 
         // 사용자 조회
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND));
+        User user = userRepository.findByIdAndActiveTrue(userId)
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_DEACTIVATED));
 
         // 폴더 조회
         Folder folder = folderRepository.findById(folderId)
@@ -248,8 +249,8 @@ public class FolderService {
     public FolderResponse.EditFolderOrderRes editFolderOrder(FolderRequest.EditFolderOrderReq request, Long userId) {
 
         // 사용자 조회
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND));
+        User user = userRepository.findByIdAndActiveTrue(userId)
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_DEACTIVATED));
 
         // 순서를 변경할 폴더 조회
         Folder targetFolder = folderRepository.findById(request.folderId())

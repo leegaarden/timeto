@@ -35,13 +35,12 @@ public class TaskService {
     public TaskResponse.CreateTaskRes createTask(TaskRequest.CreateTaskReq request, Long userId) {
 
         // 사용자 조회
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND));
+        User user = userRepository.findByIdAndActiveTrue(userId)
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_DEACTIVATED));
 
         // 폴더 조회
         Folder folder = folderRepository.findById(request.folderId())
                 .orElseThrow(() -> new GeneralException(ErrorCode.FOLDER_NOT_FOUND));
-
 
         // Level 문자열을 Enum으로 변환
         Level levelEnum;
@@ -84,8 +83,8 @@ public class TaskService {
     public TaskResponse.GetTaskRes getTask (Long taskId, Long userId) {
 
         // 사용자 조회
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND));
+        User user = userRepository.findByIdAndActiveTrue(userId)
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_DEACTIVATED));
 
         // 할 일 조회
         Task task = taskRepository.findById(taskId)
@@ -115,8 +114,8 @@ public class TaskService {
     public TaskResponse.EditTaskRes editTask (TaskRequest.EditTaskReq request, Long userId) {
 
         // 사용자 조회
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND));
+        User user = userRepository.findByIdAndActiveTrue(userId)
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_DEACTIVATED));
 
         // 할 일 조회
         Task task = taskRepository.findById(request.taskId())
@@ -182,8 +181,8 @@ public class TaskService {
     public TaskResponse.DeleteTaskRes deleteTask (Long taskId, Long userId) {
 
         // 사용자 조회
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND));
+        User user = userRepository.findByIdAndActiveTrue(userId)
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_DEACTIVATED));
 
         // 할 일 조회
         Task task = taskRepository.findById(taskId)
@@ -201,9 +200,10 @@ public class TaskService {
 
     // 할 일 완료
     public Long doneTask (Long taskId, Long userId) {
+
         // 사용자 조회
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND));
+        User user = userRepository.findByIdAndActiveTrue(userId)
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_DEACTIVATED));
 
         // 할 일 조회
         Task task = taskRepository.findById(taskId)
@@ -220,8 +220,8 @@ public class TaskService {
     public TaskResponse.EditTaskOrderRes editTaskOrder (TaskRequest.EditTaskOrderReq request, Long userId) {
 
         // 사용자 조회
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND));
+        User user = userRepository.findByIdAndActiveTrue(userId)
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_DEACTIVATED));
 
         // 순서 변경할 할 일 조회
         Task targetTask = taskRepository.findById(request.taskId())
@@ -286,8 +286,8 @@ public class TaskService {
     public TaskResponse.GetOnlyProgressTaskRes getOnlyProgressTask(Long folderId, Long userId) {
 
         // 사용자 조회
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND));
+        User user = userRepository.findByIdAndActiveTrue(userId)
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_DEACTIVATED));
 
         // 폴더 조회
         Folder folder = folderRepository.findById(folderId)
@@ -316,6 +316,7 @@ public class TaskService {
     }
     // 할 일 정보 생성
     public TaskResponse.TaskInfo createTaskInfo(Task task) {
+
         String date = "미정";
 
         // 타임블록이 있는 경우, 날짜 정보 포맷팅

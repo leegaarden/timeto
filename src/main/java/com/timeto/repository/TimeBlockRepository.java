@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 public interface TimeBlockRepository extends JpaRepository<TimeBlock, Long> {
 
@@ -14,4 +15,7 @@ public interface TimeBlockRepository extends JpaRepository<TimeBlock, Long> {
     boolean existsByDateAndTimeOverlap(LocalDate date, LocalTime startTime, LocalTime endTime);
 
     TimeBlock findByTaskId(Long taskId);
+
+    // 특정 날짜의 타임블록을 종료 시간 기준 내림차순으로 조회
+    List<TimeBlock> findByDateOrderByEndTimeDesc(LocalDate date);
 }
