@@ -51,8 +51,18 @@ public class SecurityConfig {
                         .successHandler((request, response, authentication) -> {
                             // 로그인 성공 시 처리 로직 (이전과 동일)
                             response.sendRedirect("http://localhost:5173/goal");
-                        }));
-
+                        }))
+                .logout(logout -> logout
+                        .logoutUrl("/api/v1/users/logout")
+                        .logoutSuccessHandler((request, response, authentication) -> {
+                            response.setStatus(HttpServletResponse.SC_OK);
+                            response.setContentType("application/json");
+                            response.getWriter().write("{\"status\":\"success\",\"message\":\"로그아웃에 성공했습니다.\"}");
+                        })
+                        .deleteCookies("JSESSIONID")
+                        .invalidateHttpSession(true)
+                        .clearAuthentication(true)
+                );
         return http.build();
     }
 }
