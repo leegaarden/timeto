@@ -1,4 +1,6 @@
 server:
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:local}
   port: 8443
   ssl:
     key-store: /opt/timeto/ssl/keystore.p12
