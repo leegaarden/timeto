@@ -1,4 +1,4 @@
-package com.timeto.oauth;
+package com.timeto.auth.oauth;
 
 import com.timeto.domain.User;
 import com.timeto.repository.UserRepository;
@@ -10,6 +10,7 @@ import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -65,5 +66,19 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         }
 
         return new CustomOAuth2User(user, oAuth2User.getAttributes());
+    }
+
+    /**
+     * 사용자 객체로부터 CustomOAuth2User 객체를 생성합니다.
+     * JWT 인증 필터에서 사용됩니다.
+     */
+    public CustomOAuth2User createOAuth2User(User user) {
+        // 기본 속성 생성
+        Map<String, Object> attributes = new HashMap<>();
+        attributes.put("sub", user.getId().toString());
+        attributes.put("email", user.getEmail());
+        attributes.put("name", user.getName());
+
+        return new CustomOAuth2User(user, attributes);
     }
 }

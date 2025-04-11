@@ -1,12 +1,9 @@
 package com.timeto.controller;
 
 import com.timeto.apiPayload.ApiResponse;
-import com.timeto.domain.Folder;
 import com.timeto.dto.folder.FolderRequest;
 import com.timeto.dto.folder.FolderResponse;
-import com.timeto.dto.goal.GoalRequest;
-import com.timeto.dto.goal.GoalResponse;
-import com.timeto.oauth.CustomOAuth2User;
+import com.timeto.auth.oauth.CustomOAuth2User;
 import com.timeto.service.FolderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

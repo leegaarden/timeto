@@ -1,4 +1,4 @@
-package com.timeto.oauth;
+package com.timeto.auth.oauth;
 
 import com.timeto.domain.User;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;

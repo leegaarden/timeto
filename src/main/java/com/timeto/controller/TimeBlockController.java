@@ -3,7 +3,7 @@ package com.timeto.controller;
 import com.timeto.apiPayload.ApiResponse;
 import com.timeto.dto.timeBlock.TimeBlockRequest;
 import com.timeto.dto.timeBlock.TimeBlockResponse;
-import com.timeto.oauth.CustomOAuth2User;
+import com.timeto.auth.oauth.CustomOAuth2User;
 import com.timeto.service.TimeBlockService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
