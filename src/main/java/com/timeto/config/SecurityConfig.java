@@ -75,6 +75,7 @@ public class SecurityConfig {
     public HttpSessionIdResolver httpSessionIdResolver() {
         CookieHttpSessionIdResolver resolver = new CookieHttpSessionIdResolver();
         DefaultCookieSerializer cookieSerializer = new DefaultCookieSerializer();
+        cookieSerializer.setDomainName("time-to.co.kr"); // 클라이언트 도메인
         cookieSerializer.setSameSite("None");
         cookieSerializer.setUseSecureCookie(true);
         resolver.setCookieSerializer(cookieSerializer);
