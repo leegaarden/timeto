@@ -6,6 +6,7 @@ import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserServ
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
@@ -45,16 +46,22 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         if (userOptional.isPresent()) {
             user = userOptional.get();
-            // 필요하다면 기존 사용자 정보 업데이트
-            user.setName((String) attributes.get("name"));
-            user = userRepository.save(user);
+
+            // 탈퇴한 회원인 경우
+            if (!user.getActive()) {
+                // 영구 탈퇴 - 로그인 거부
+                throw new OAuth2AuthenticationException(new OAuth2Error("account_deactivated"),
+                        "This account has been deactivated. Please sign up with a different email.");
+            }
+
         } else {
-            // 신규 사용자 생성
+            // 신규 사용자 처리 (기존 로직)
+            String name = oAuth2User.getAttribute("name");
             user = User.builder()
-                    .name((String) attributes.get("name"))
                     .email(email)
+                    .name(name)
                     .build();
-            user = userRepository.save(user);
+            userRepository.save(user);
         }
 
         return new CustomOAuth2User(user, oAuth2User.getAttributes());

@@ -14,6 +14,7 @@ public enum ErrorCode {
     //USER_NOT_FOUND(HttpStatus.BAD_REQUEST, "U001", "존재하지 않는 사용자입니다."),
     INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "P001", "잘못된 파라미터가 포함되어 있습니다"),
     USER_DEACTIVATED(HttpStatus.FORBIDDEN, "U002", "탈퇴한 사용자입니다"),
+    USER_ALREADY_DEACTIVATED(HttpStatus.FORBIDDEN, "U003", "이미 탈퇴한 사용자입니다."),
 
     // 목표 에러
     DUPLICATE_GOAL_NAME(HttpStatus.BAD_REQUEST, "G001", "목표 이름은 중복될 수 없습니다."),
