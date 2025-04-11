@@ -18,6 +18,7 @@ public class Task extends BaseEntity {
     private Long id;
 
     @Column(length = 25, nullable = false)
+    @Setter
     private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -26,9 +27,11 @@ public class Task extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @Setter
     private Level level; // "HIGH", "MIDDLE", "LOW" 값을 가짐
 
     @Column(nullable = false)
+    @Setter
     private LocalTime time; // 예상 소요 시간
 
     @Column(columnDefinition = "TEXT", nullable = true)
