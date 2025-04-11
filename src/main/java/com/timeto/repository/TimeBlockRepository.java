@@ -29,4 +29,9 @@ public interface TimeBlockRepository extends JpaRepository<TimeBlock, Long> {
             LocalTime endTime,
             Long excludeId
     );
+
+    // 특정 날짜의 타임 블럭 조회 (특정 ID 제외)
+    List<TimeBlock> findByDateAndIdNot(LocalDate date, Long id);
+
+    List<TimeBlock> findByDate(LocalDate date);
 }

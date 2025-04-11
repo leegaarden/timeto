@@ -100,4 +100,20 @@ public class TimeBlockController {
 
         return ApiResponse.success("타임 블럭과 할 일이 수정되었습니다.", response);
     }
+
+    @PatchMapping("/order")
+    @Operation(summary = "TIME_BLOCK_API_06 : 타임 블럭 순서 이동", description = "타임 블럭의 순서를 이동합니다.")
+    public ApiResponse<TimeBlockResponse.EditTimeBLockOrderRes> editTimeBLockOrder (
+            @Valid @RequestBody TimeBlockRequest.EditTImeBlockOrderReq request,
+            Authentication authentication) {
+        // 현재 인증된 사용자 정보 가져오기
+        CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
+        Long userId = oAuth2User.getId();
+
+        // 서비스 호출하여 타임 블럭 순서 이동
+        TimeBlockResponse.EditTimeBLockOrderRes response = timeBlockService.editTimeBlockOrder(request, userId);
+
+        return ApiResponse.success("타임 블럭 순서가 이동되었습니다.", response);
+    }
+
 }

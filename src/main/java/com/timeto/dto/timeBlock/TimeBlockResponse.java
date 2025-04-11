@@ -95,4 +95,16 @@ public class TimeBlockResponse {
             @Schema(description = "중요도", example = "HIGH")
             String level
     ) {}
+
+    @Schema(title = "TIME_BLOCK_RES_05 : 타임 블럭 순서 이동 응답")
+    public record EditTimeBLockOrderRes (
+
+            @JsonFormat(pattern = "H:mm", shape = JsonFormat.Shape.STRING)
+            @Schema(description = "시작 시간", example = "6:00")
+            LocalTime startTime,
+
+            @JsonFormat(pattern = "H:mm", shape = JsonFormat.Shape.STRING)
+            @Schema(description = "종료 시간", example = "8:00")
+            LocalTime endTime
+    ) {}
 }
