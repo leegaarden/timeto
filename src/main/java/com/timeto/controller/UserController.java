@@ -2,8 +2,12 @@ package com.timeto.controller;
 
 
 import com.timeto.apiPayload.ApiResponse;
+import com.timeto.auth.jwt.JwtTokenProvider;
+import com.timeto.config.exception.ErrorCode;
+import com.timeto.config.exception.GeneralException;
 import com.timeto.dto.user.UserResponse;
 import com.timeto.auth.oauth.CustomOAuth2User;
+import com.timeto.repository.UserRepository;
 import com.timeto.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,14 +28,19 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final UserRepository userRepository;
+
     @GetMapping
     @Operation(summary = "USER_API_01 : 유저 정보 조회", description = "유저의 정보 및 메뉴를 조회합니다.")
     public ApiResponse<UserResponse.GetUserInfoRes> getUserInfo (
-            Authentication authentication
+            @RequestHeader("Authorization") String token
     ) {
         // 현재 인증된 사용자 정보 가져오기
-        CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
-        Long userId = oAuth2User.getId();
+        String email = jwtTokenProvider.getEmailFromToken(token.replace("Bearer ", ""));
+        Long userId = userRepository.findByEmail(email)
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_DEACTIVATED))
+                .getId();
 
         UserResponse.GetUserInfoRes response = userService.getUserInfo(userId);
 
@@ -40,7 +49,7 @@ public class UserController {
 
     @PostMapping("/logout")
     @Operation(summary = "USER_API_02 : 로그아웃", description = "현재 로그인한 사용자의 세션을 종료합니다.")
-    public ApiResponse<Void> logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+    public ApiResponse<Void> logout(HttpServletRequest request, HttpServletResponse response, @RequestHeader("Authorization") String token) {
         // 현재 세션 가져오기
         HttpSession session = request.getSession(false);
         if (session != null) {
@@ -63,11 +72,13 @@ public class UserController {
     @Operation(summary = "USER_API_03 : 회원 탈퇴", description = "현재 로그인한 사용자의 계정을 비활성화합니다.")
     public ApiResponse<Void> deactivateUser(HttpServletRequest request,
                                             HttpServletResponse response,
-                                            Authentication authentication) {
+                                            @RequestHeader("Authorization") String token) {
 
         // 현재 인증된 사용자 정보 가져오기
-        CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
-        Long userId = oAuth2User.getId();
+        String email = jwtTokenProvider.getEmailFromToken(token.replace("Bearer ", ""));
+        Long userId = userRepository.findByEmail(email)
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_DEACTIVATED))
+                .getId();
 
         // 회원 탈퇴 처리
         userService.deactivateUser(userId);
