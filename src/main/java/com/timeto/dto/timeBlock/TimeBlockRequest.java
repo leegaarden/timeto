@@ -65,4 +65,16 @@ public class TimeBlockRequest {
             @Schema(description = "중요도", example = "HIGH")
             String level
     ) {}
+
+    @Schema(title = "TIME_BLOCK_REQ_04 : 타임 블럭 순서 이동 요청")
+    public record EditTImeBlockOrderReq (
+
+            @Schema(description = "수정할 할 일 아이디", example = "1")
+            Long taskId,
+
+            @JsonFormat(pattern = "H:mm", shape = JsonFormat.Shape.STRING)
+            @Schema(description = "이동하려는 블럭의 시작 시간", example = "6:00")
+            LocalTime startTime
+    ) {}
+
 }

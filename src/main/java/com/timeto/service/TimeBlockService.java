@@ -51,15 +51,26 @@ public class TimeBlockService {
             throw new GeneralException(ErrorCode.INVALID_TIME_RANGE);
         }
 
-        // 요청 시간에 이미 타임 블럭이 존재하는지 확인
-        boolean hasOverlap = timeBlockRepository.existsByDateAndTimeOverlap(
-                request.date(),
-                request.startTime(),
-                request.endTime()
-        );
+        // 해당 날짜의 모든 타임 블럭 조회 (현재 타임 블럭 제외)
+        List<TimeBlock> otherTimeBlocks = timeBlockRepository.findByDate(request.date());
 
-        if (hasOverlap) {
-            throw new GeneralException(ErrorCode.TIME_BLOCK_OVERLAP);
+        // 시간 겹침 확인 (정확히 맞닿는 경우는 허용)
+        for (TimeBlock other : otherTimeBlocks) {
+            // 시작 시간이 다른 블럭의 시간 범위 내에 있는 경우 (딱 맞닿는 경우 제외)
+            boolean startTimeOverlap = request.startTime().isAfter(other.getStartTime()) &&
+                    request.startTime().isBefore(other.getEndTime());
+
+            // 종료 시간이 다른 블럭의 시간 범위 내에 있는 경우 (딱 맞닿는 경우 제외)
+            boolean endTimeOverlap = request.endTime().isAfter(other.getStartTime()) &&
+                    request.endTime().isBefore(other.getEndTime());
+
+            // 시작 시간과 종료 시간 사이에 다른 블럭이 완전히 포함되는 경우
+            boolean containsOtherBlock = request.startTime().isBefore(other.getStartTime()) &&
+                    request.endTime().isAfter(other.getEndTime());
+
+            if (startTimeOverlap || endTimeOverlap || containsOtherBlock) {
+                throw new GeneralException(ErrorCode.TIME_BLOCK_OVERLAP);
+            }
         }
 
         // Level 문자열을 Enum으로 변환
@@ -246,6 +257,7 @@ public class TimeBlockService {
     // 타임 블럭 수정
     @Transactional
     public TimeBlockResponse.EditTimeBLockRes editTimeBlock(TimeBlockRequest.EditTimeBlockReq request, Long userId) {
+
         // 사용자 조회
         User user = userRepository.findByIdAndActiveTrue(userId)
                 .orElseThrow(() -> new GeneralException(ErrorCode.USER_DEACTIVATED));
@@ -284,16 +296,26 @@ public class TimeBlockService {
                 throw new GeneralException(ErrorCode.INVALID_TIME_RANGE);
             }
 
-            // 요청 시간에 이미 타임 블럭이 존재하는지 확인 (자신의 타임 블럭은 제외)
-            boolean hasOverlap = timeBlockRepository.existsByDateAndTimeOverlapExcludingId(
-                    timeBlock.getDate(),
-                    request.startTime(),
-                    request.endTime(),
-                    timeBlock.getId()
-            );
+            // 해당 날짜의 모든 타임 블럭 조회 (현재 타임 블럭 제외)
+            List<TimeBlock> otherTimeBlocks = timeBlockRepository.findByDate(timeBlock.getDate());
 
-            if (hasOverlap) {
-                throw new GeneralException(ErrorCode.TIME_BLOCK_OVERLAP);
+            // 시간 겹침 확인 (정확히 맞닿는 경우는 허용)
+            for (TimeBlock other : otherTimeBlocks) {
+                // 시작 시간이 다른 블럭의 시간 범위 내에 있는 경우 (딱 맞닿는 경우 제외)
+                boolean startTimeOverlap = request.startTime().isAfter(other.getStartTime()) &&
+                        request.startTime().isBefore(other.getEndTime());
+
+                // 종료 시간이 다른 블럭의 시간 범위 내에 있는 경우 (딱 맞닿는 경우 제외)
+                boolean endTimeOverlap = request.endTime().isAfter(other.getStartTime()) &&
+                        request.endTime().isBefore(other.getEndTime());
+
+                // 시작 시간과 종료 시간 사이에 다른 블럭이 완전히 포함되는 경우
+                boolean containsOtherBlock = request.startTime().isBefore(other.getStartTime()) &&
+                        request.endTime().isAfter(other.getEndTime());
+
+                if (startTimeOverlap || endTimeOverlap || containsOtherBlock) {
+                    throw new GeneralException(ErrorCode.TIME_BLOCK_OVERLAP);
+                }
             }
 
             // 타임 블럭 시간 변경
@@ -336,6 +358,79 @@ public class TimeBlockService {
                 timeBlock.getStartTime(),
                 timeBlock.getEndTime(),
                 task.getLevel().name()
+        );
+    }
+
+    // 타임 블럭 순서 이동
+    @Transactional
+    public TimeBlockResponse.EditTimeBLockOrderRes editTimeBlockOrder(TimeBlockRequest.EditTImeBlockOrderReq request, Long userId) {
+
+        // 사용자 조회
+        User user = userRepository.findByIdAndActiveTrue(userId)
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_DEACTIVATED));
+
+        // 할 일 조회
+        Task task = taskRepository.findById(request.taskId())
+                .orElseThrow(() -> new GeneralException(ErrorCode.TASK_NOT_FOUND));
+
+        // 타임 블럭 조회
+        TimeBlock timeBlock = task.getTimeBlock();
+        if (timeBlock == null) {
+            throw new GeneralException(ErrorCode.TIME_BLOCK_NOT_FOUND);
+        }
+
+        // 현재 타임 블럭의 지속 시간 계산
+        long durationMinutes = Duration.between(timeBlock.getStartTime(), timeBlock.getEndTime()).toMinutes();
+
+        // 새로운 종료 시간 계산
+        LocalTime newEndTime = request.startTime().plusMinutes(durationMinutes);
+
+        // 새로운 종료 시간이 자정을 넘어가는지 확인
+        if (newEndTime.isAfter(LocalTime.of(23, 59, 59))) {
+            throw new GeneralException(ErrorCode.TIME_BLOCK_OVERLAP);
+        }
+
+        // 현재 시간과 요청 시간이 같은 경우
+        if (timeBlock.getStartTime().equals(request.startTime())) {
+            throw new GeneralException(ErrorCode.NO_CHANGES_DETECTED);
+        }
+
+        // 해당 날짜의 모든 타임 블럭 조회 (현재 타임 블럭 제외)
+        List<TimeBlock> otherTimeBlocks = timeBlockRepository.findByDateAndIdNot(
+                timeBlock.getDate(),
+                timeBlock.getId()
+        );
+
+        // 시간 겹침 확인 (정확히 맞닿는 경우는 허용)
+        for (TimeBlock other : otherTimeBlocks) {
+            // 시작 시간이 다른 블럭의 시간 범위 내에 있는 경우 (딱 맞닿는 경우 제외)
+            boolean startTimeOverlap = request.startTime().isAfter(other.getStartTime()) &&
+                    request.startTime().isBefore(other.getEndTime());
+
+            // 종료 시간이 다른 블럭의 시간 범위 내에 있는 경우 (딱 맞닿는 경우 제외)
+            boolean endTimeOverlap = newEndTime.isAfter(other.getStartTime()) &&
+                    newEndTime.isBefore(other.getEndTime());
+
+            // 시작 시간과 종료 시간 사이에 다른 블럭이 완전히 포함되는 경우
+            boolean containsOtherBlock = request.startTime().isBefore(other.getStartTime()) &&
+                    newEndTime.isAfter(other.getEndTime());
+
+            if (startTimeOverlap || endTimeOverlap || containsOtherBlock) {
+                throw new GeneralException(ErrorCode.TIME_BLOCK_OVERLAP);
+            }
+        }
+
+        // 타임 블럭 시간 변경
+        timeBlock.setStartTime(request.startTime());
+        timeBlock.setEndTime(newEndTime);
+
+        // 저장
+        timeBlockRepository.save(timeBlock);
+
+        // 응답 생성
+        return new TimeBlockResponse.EditTimeBLockOrderRes(
+                timeBlock.getStartTime(),
+                timeBlock.getEndTime()
         );
     }
 }
