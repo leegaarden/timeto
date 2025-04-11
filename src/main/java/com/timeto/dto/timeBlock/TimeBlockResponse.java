@@ -31,6 +31,7 @@ public class TimeBlockResponse {
 
     @Schema(title = "TIME_BLOCK_RES_02-1 : 할 일 정보")
     public record TaskInfo (
+
             @Schema(description = "할 일 아이디", example = "1")
             Long taskId,
 
@@ -76,5 +77,22 @@ public class TimeBlockResponse {
             @JsonFormat(pattern = "H:mm", shape = JsonFormat.Shape.STRING)
             @Schema(description = "종료 시간", example = "8:00")
             LocalTime endTime
+    ) {}
+
+    @Schema(title = "TIME_BLOCK_RES_04 : 타임 블럭 수정 응답")
+    public record EditTimeBLockRes (
+            @Schema(description = "할 일 이름", example = "경쟁사 캠페인 비교")
+            String taskName,
+
+            @JsonFormat(pattern = "H:mm", shape = JsonFormat.Shape.STRING)
+            @Schema(description = "시작 시간", example = "6:00")
+            LocalTime startTime,
+
+            @JsonFormat(pattern = "H:mm", shape = JsonFormat.Shape.STRING)
+            @Schema(description = "종료 시간", example = "8:00")
+            LocalTime endTime,
+
+            @Schema(description = "중요도", example = "HIGH")
+            String level
     ) {}
 }

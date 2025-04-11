@@ -1,10 +1,7 @@
 package com.timeto.domain;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -23,9 +20,11 @@ public class TimeBlock extends BaseEntity{
     private LocalDate date;
 
     @Column(nullable = false)
+    @Setter
     private LocalTime startTime;
 
     @Column(nullable = false)
+    @Setter
     private LocalTime endTime;
 
     @OneToOne(mappedBy = "timeBlock")

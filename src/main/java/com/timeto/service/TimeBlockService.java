@@ -41,6 +41,16 @@ public class TimeBlockService {
         Folder folder = folderRepository.findById(request.folderId())
                 .orElseThrow(() -> new GeneralException(ErrorCode.FOLDER_NOT_FOUND));
 
+        // 종료 시간이 24시를 넘어가는지 확인
+        if (request.endTime().isAfter(LocalTime.of(23, 59))) {
+            throw new GeneralException(ErrorCode.TIME_BLOCK_OVERLAP);
+        }
+
+        // 시간이 역전됐는지 확인
+        if (request.endTime().isBefore(request.startTime())) {
+            throw new GeneralException(ErrorCode.INVALID_TIME_RANGE);
+        }
+
         // 요청 시간에 이미 타임 블럭이 존재하는지 확인
         boolean hasOverlap = timeBlockRepository.existsByDateAndTimeOverlap(
                 request.date(),
@@ -231,5 +241,101 @@ public class TimeBlockService {
 
         // 삭제된 할 일 ID 반환
         return taskId;
+    }
+
+    // 타임 블럭 수정
+    @Transactional
+    public TimeBlockResponse.EditTimeBLockRes editTimeBlock(TimeBlockRequest.EditTimeBlockReq request, Long userId) {
+        // 사용자 조회
+        User user = userRepository.findByIdAndActiveTrue(userId)
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_DEACTIVATED));
+
+        // 할 일 조회
+        Task task = taskRepository.findById(request.taskId())
+                .orElseThrow(() -> new GeneralException(ErrorCode.TASK_NOT_FOUND));
+
+        // 타임 블럭 조회
+        TimeBlock timeBlock = task.getTimeBlock();
+        if (timeBlock == null) {
+            throw new GeneralException(ErrorCode.TIME_BLOCK_NOT_FOUND);
+        }
+
+        // 변경 사항 확인
+        boolean hasChanges = false;
+
+        // 할 일 이름 변경
+        if (!task.getName().equals(request.taskName())) {
+            task.setName(request.taskName());
+            hasChanges = true;
+        }
+
+        // 시간 변경 확인
+        boolean timeChanged = !timeBlock.getStartTime().equals(request.startTime()) ||
+                !timeBlock.getEndTime().equals(request.endTime());
+
+        if (timeChanged) {
+            // 종료 시간이 24시를 넘어가는지 확인
+            if (request.endTime().isAfter(LocalTime.of(23, 59))) {
+                throw new GeneralException(ErrorCode.TIME_BLOCK_OVERLAP);
+            }
+
+            // 시간이 역전됐는지 확인
+            if (request.endTime().isBefore(request.startTime())) {
+                throw new GeneralException(ErrorCode.INVALID_TIME_RANGE);
+            }
+
+            // 요청 시간에 이미 타임 블럭이 존재하는지 확인 (자신의 타임 블럭은 제외)
+            boolean hasOverlap = timeBlockRepository.existsByDateAndTimeOverlapExcludingId(
+                    timeBlock.getDate(),
+                    request.startTime(),
+                    request.endTime(),
+                    timeBlock.getId()
+            );
+
+            if (hasOverlap) {
+                throw new GeneralException(ErrorCode.TIME_BLOCK_OVERLAP);
+            }
+
+            // 타임 블럭 시간 변경
+            timeBlock.setStartTime(request.startTime());
+            timeBlock.setEndTime(request.endTime());
+
+            // 할 일의 소요 시간 업데이트
+            task.setTime(LocalTime.of(
+                    (int)Duration.between(request.startTime(), request.endTime()).toHours(),
+                    (int)Duration.between(request.startTime(), request.endTime()).toMinutesPart()));
+
+            hasChanges = true;
+        }
+
+        // Level 변경 확인
+        Level levelEnum;
+        try {
+            levelEnum = Level.valueOf(request.level());
+        } catch (IllegalArgumentException e) {
+            throw new GeneralException(ErrorCode.INVALID_PARAMETER);
+        }
+
+        if (!task.getLevel().equals(levelEnum)) {
+            task.setLevel(levelEnum);
+            hasChanges = true;
+        }
+
+        // 변경 사항이 없는 경우
+        if (!hasChanges) {
+            throw new GeneralException(ErrorCode.NO_CHANGES_DETECTED);
+        }
+
+        // 저장
+        timeBlockRepository.save(timeBlock);
+        taskRepository.save(task);
+
+        // 응답 생성
+        return new TimeBlockResponse.EditTimeBLockRes(
+                task.getName(),
+                timeBlock.getStartTime(),
+                timeBlock.getEndTime(),
+                task.getLevel().name()
+        );
     }
 }

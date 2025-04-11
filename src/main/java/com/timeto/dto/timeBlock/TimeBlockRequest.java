@@ -1,6 +1,7 @@
 package com.timeto.dto.timeBlock;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.timeto.config.exception.custom.annotation.ValidMemoInput;
 import com.timeto.config.exception.custom.annotation.ValidTextInput;
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -41,5 +42,27 @@ public class TimeBlockRequest {
 
             @Schema(description = "할 일 ID", example = "1")
             Long taskId
+    ) {}
+
+    @Schema(title = "TIME_BLOCK_REQ_03 : 타임 블럭 할 일 수정 요청")
+    public record EditTimeBlockReq (
+
+            @Schema(description = "수정할 할 일 아이디", example = "1")
+            Long taskId,
+
+            @ValidTextInput
+            @Schema(description = "할 일 이름", example = "경쟁사 캠페인 비교")
+            String taskName,
+
+            @JsonFormat(pattern = "H:mm", shape = JsonFormat.Shape.STRING)
+            @Schema(description = "시작 시간", example = "6:00")
+            LocalTime startTime,
+
+            @JsonFormat(pattern = "H:mm", shape = JsonFormat.Shape.STRING)
+            @Schema(description = "종료 시간", example = "8:00")
+            LocalTime endTime,
+
+            @Schema(description = "중요도", example = "HIGH")
+            String level
     ) {}
 }

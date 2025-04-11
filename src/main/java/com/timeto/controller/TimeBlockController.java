@@ -84,4 +84,20 @@ public class TimeBlockController {
 
         return ApiResponse.success("타임 블럭과 할 일이 삭제되었습니다.", deletedTaskId);
     }
+
+    @PutMapping
+    @Operation(summary = "TIME_BLOCK_API_05 : 타임 블럭 및 할 일 수정", description = "타임 블럭과 연결된 할 일을 수정합니다.")
+    public ApiResponse<TimeBlockResponse.EditTimeBLockRes> editTimeBlock(
+            @Valid @RequestBody TimeBlockRequest.EditTimeBlockReq request,
+            Authentication authentication) {
+
+        // 현재 인증된 사용자 정보 가져오기
+        CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
+        Long userId = oAuth2User.getId();
+
+        // 서비스 호출하여 타임 블럭과 할 일 수정
+        TimeBlockResponse.EditTimeBLockRes response = timeBlockService.editTimeBlock(request, userId);
+
+        return ApiResponse.success("타임 블럭과 할 일이 수정되었습니다.", response);
+    }
 }
