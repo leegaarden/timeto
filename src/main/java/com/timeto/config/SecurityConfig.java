@@ -1,21 +1,18 @@
 package com.timeto.config;
 
-import com.timeto.oauth.CustomOAuth2UserService;
+import com.timeto.auth.jwt.JwtAuthenticationFilter;
+import com.timeto.auth.oauth.CustomOAuth2UserService;
+import com.timeto.auth.oauth.OAuth2AuthenticationSuccessHandler;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.session.web.http.CookieHttpSessionIdResolver;
-import org.springframework.session.web.http.DefaultCookieSerializer;
-import org.springframework.session.web.http.HttpSessionIdResolver;
 
 @Configuration
 @EnableWebSecurity
@@ -24,14 +21,17 @@ public class SecurityConfig {
 
     private final CustomOAuth2UserService customOAuth2UserService;
     private final CorsConfigurationSource corsConfigurationSource;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .csrf(csrf -> csrf.disable())
+                // JWT 기반 인증을 위해 세션 정책을 STATELESS로 변경
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/",
@@ -44,7 +44,6 @@ public class SecurityConfig {
                         .anyRequest().authenticated())
                 .exceptionHandling(exceptions -> exceptions
                         .authenticationEntryPoint((request, response, authException) -> {
-                            // 인증되지 않은 사용자에게 401 응답 반환
                             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                             response.setContentType("application/json");
                             response.getWriter().write("{\"status\":\"error\",\"message\":\"인증이 필요합니다.\",\"code\":\"UNAUTHORIZED\"}");
@@ -53,10 +52,8 @@ public class SecurityConfig {
                 .oauth2Login(oauth2 -> oauth2
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(customOAuth2UserService))
-                        .successHandler((request, response, authentication) -> {
-                            // 로그인 성공 시 처리 로직 (이전과 동일)
-                            response.sendRedirect("https://time-to.co.kr/goal");
-                        }))
+                        // OAuth2 로그인 성공 시 JWT 토큰을 생성하고 리다이렉트하는 핸들러 추가
+                        .successHandler(oAuth2AuthenticationSuccessHandler))
                 .logout(logout -> logout
                         .logoutUrl("/api/v1/users/logout")
                         .logoutSuccessHandler((request, response, authentication) -> {
@@ -64,21 +61,13 @@ public class SecurityConfig {
                             response.setContentType("application/json");
                             response.getWriter().write("{\"status\":\"success\",\"message\":\"로그아웃에 성공했습니다.\"}");
                         })
-                        .deleteCookies("JSESSIONID")
                         .invalidateHttpSession(true)
                         .clearAuthentication(true)
                 );
-        return http.build();
-    }
 
-    @Bean
-    public HttpSessionIdResolver httpSessionIdResolver() {
-        CookieHttpSessionIdResolver resolver = new CookieHttpSessionIdResolver();
-        DefaultCookieSerializer cookieSerializer = new DefaultCookieSerializer();
-        cookieSerializer.setDomainName("time-to.co.kr"); // 클라이언트 도메인
-        cookieSerializer.setSameSite("None");
-        cookieSerializer.setUseSecureCookie(true);
-        resolver.setCookieSerializer(cookieSerializer);
-        return resolver;
+        // JWT 필터를 UsernamePasswordAuthenticationFilter 전에 추가
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
     }
 }
