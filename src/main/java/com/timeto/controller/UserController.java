@@ -14,10 +14,8 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -59,5 +57,45 @@ public class UserController {
         response.addCookie(cookie);
 
         return ApiResponse.success("로그아웃에 성공했습니다.", null);
+    }
+
+    @DeleteMapping("/deactivate")
+    @Operation(summary = "USER_API_03 : 회원 탈퇴", description = "현재 로그인한 사용자의 계정을 비활성화합니다.")
+    public ApiResponse<Void> deactivateUser(HttpServletRequest request,
+                                            HttpServletResponse response,
+                                            Authentication authentication) {
+
+        // 현재 인증된 사용자 정보 가져오기
+        CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
+        Long userId = oAuth2User.getId();
+
+        // 회원 탈퇴 처리
+        userService.deactivateUser(userId);
+
+        // 로그아웃 처리
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+
+        SecurityContextHolder.clearContext();
+
+        // 세션 쿠키 삭제
+        Cookie cookie = new Cookie("JSESSIONID", null);
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+        response.addCookie(cookie);
+
+        return ApiResponse.success("회원 탈퇴에 성공했습니다.", null);
+    }
+
+    @GetMapping("/login/oauth2/error")
+    @Operation(summary = "USER_API_04 : 탈퇴한 회원이 재로그인 하는 경우 에러 처리", description = "현재 로그인한 사용자의 계정을 비활성화합니다.")
+    public String handleOAuth2Error(@RequestParam("error_code") String errorCode, Model model) {
+        if ("account_deactivated".equals(errorCode)) {
+            model.addAttribute("errorMessage", "탈퇴한 계정입니다. 다른 이메일로 가입해주세요.");
+            // 또는 계정 복구 옵션을 제공하는 페이지로 이동
+        }
+        return "oauth2-error";
     }
 }
