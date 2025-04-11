@@ -43,6 +43,10 @@ dependencies {
 
     // oauth - spring-boot-starter-security 중복 제거
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+    // Spring Session
+    implementation 'org.springframework.session:spring-session-core'
+    implementation 'org.springframework.session:spring-session-jdbc' // 또는 다른 저장소 구현체
 }
 
 tasks.named('test') {

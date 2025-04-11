@@ -11,6 +11,11 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.session.web.http.CookieHttpSessionIdResolver;
+import org.springframework.session.web.http.DefaultCookieSerializer;
+import org.springframework.session.web.http.HttpSessionIdResolver;
 
 @Configuration
 @EnableWebSecurity
@@ -50,7 +55,7 @@ public class SecurityConfig {
                                 .userService(customOAuth2UserService))
                         .successHandler((request, response, authentication) -> {
                             // 로그인 성공 시 처리 로직 (이전과 동일)
-                            response.sendRedirect("http://localhost:5173/goal");
+                            response.sendRedirect("https://time-to.co.kr/goal");
                         }))
                 .logout(logout -> logout
                         .logoutUrl("/api/v1/users/logout")
@@ -64,5 +69,15 @@ public class SecurityConfig {
                         .clearAuthentication(true)
                 );
         return http.build();
+    }
+
+    @Bean
+    public HttpSessionIdResolver httpSessionIdResolver() {
+        CookieHttpSessionIdResolver resolver = new CookieHttpSessionIdResolver();
+        DefaultCookieSerializer cookieSerializer = new DefaultCookieSerializer();
+        cookieSerializer.setSameSite("None");
+        cookieSerializer.setUseSecureCookie(true);
+        resolver.setCookieSerializer(cookieSerializer);
+        return resolver;
     }
 }

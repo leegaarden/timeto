@@ -14,6 +14,7 @@ public class CorsConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList(
+
                 // HTTP
                 "http://localhost:8080",
                 "http://localhost:5173",
@@ -32,7 +33,8 @@ public class CorsConfig {
                 "http://timeto.digital",
                 "https://timeto.digital",
                 "http://www.timeto.digital",
-                "https://www.timeto.digital"
+                "https://www.timeto.digital",
+                "https://time-to.co.kr"
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
