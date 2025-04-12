@@ -44,7 +44,8 @@ public class SecurityConfig {
                                 "/api/v1/folders/**",
                                 "/api/v1/goals/**",
                                 "/api/v1/tasks/**",
-                                "/api/v1/time-blocks/**"
+                                "/api/v1/time-blocks/**",
+                                "/auth-success.html"
                         ).permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(exceptions -> exceptions

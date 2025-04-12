@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>로그인 성공</title>
+    <meta charset="UTF-8">
+</head>
+<body>
+<h3>로그인 성공! 잠시만 기다려주세요...</h3>
+
+<script>
+    // URL 파라미터에서 토큰과 리다이렉트 URL 추출
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+    const redirectUrl = urlParams.get('redirect');
+
+    if (token) {
+        // 토큰 저장 (auth_token으로 통일)
+        localStorage.setItem('auth_token', token);
+        console.log('토큰이 저장되었습니다.');
+
+        // 리다이렉트
+        if (redirectUrl) {
+            window.location.href = redirectUrl;
+        } else {
+            window.location.href = '/';
+        }
+    } else {
+        document.body.innerHTML += '<p>오류: 토큰이 없습니다.</p>';
+    }
+</script>
+</body>
+</html>
