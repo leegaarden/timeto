@@ -34,15 +34,29 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             String token = tokenProvider.generateToken(authentication);
             log.debug("JWT 토큰 생성 완료");
 
-            // 리다이렉트 URI에 토큰 추가
-            String targetUrl = UriComponentsBuilder.fromUriString(redirectUri)
-                    .queryParam("token", token)
-                    .build().toUriString();
+            // HTML로 응답 작성
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().write(
+                    "<!DOCTYPE html>" +
+                            "<html>" +
+                            "<head>" +
+                            "    <title>로그인 처리 중...</title>" +
+                            "</head>" +
+                            "<body>" +
+                            "    <p>로그인 성공! 잠시만 기다려주세요...</p>" +
+                            "    <script>" +
+                            "        // 토큰을 localStorage에 저장" +
+                            "        localStorage.setItem('token', '" + token + "');" +
+                            "        console.log('토큰이 localStorage에 저장되었습니다.');" +
+                            "        // 리다이렉트" +
+                            "        window.location.href = '" + redirectUri + "';" +
+                            "    </script>" +
+                            "</body>" +
+                            "</html>"
+            );
 
-            log.info("리다이렉트 URL: {}", redirectUri);
+            log.info("토큰 저장 스크립트 전송 완료. 리다이렉트 URL: {}", redirectUri);
 
-            // 리다이렉트
-            getRedirectStrategy().sendRedirect(request, response, targetUrl);
         } catch (Exception e) {
             log.error("OAuth2 로그인 성공 처리 중 오류 발생", e);
             super.onAuthenticationSuccess(request, response, authentication);
