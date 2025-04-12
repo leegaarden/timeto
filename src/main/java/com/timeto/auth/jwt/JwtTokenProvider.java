@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.security.Key;
 import java.util.Date;
@@ -49,17 +50,33 @@ public class JwtTokenProvider {
 
     // 사용자 이메일 추출
     public String getEmailFromToken(String token) {
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+        // 토큰 유효성 검증
+        if (!StringUtils.hasText(token)) {
+            throw new IllegalArgumentException("토큰이 비어있습니다.");
+        }
 
-        return claims.getSubject();
+        try {
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+
+            return claims.getSubject();
+        } catch (Exception e) {
+            log.error("JWT 토큰에서 이메일 추출 실패: {}", e.getMessage());
+            throw new RuntimeException("토큰에서 이메일을 추출할 수 없습니다: " + e.getMessage());
+        }
     }
 
     // 토큰 유효성 검사
     public boolean validateToken(String token) {
+        // 토큰이 null이거나 빈 문자열인 경우
+        if (!StringUtils.hasText(token)) {
+            log.error("JWT 토큰이 비어있습니다");
+            return false;
+        }
+
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
@@ -67,5 +84,13 @@ public class JwtTokenProvider {
             log.error("JWT 토큰 유효성 검사 실패: {}", e.getMessage());
             return false;
         }
+    }
+
+    // Bearer 접두사 제거 및 토큰 추출
+    public String resolveToken(String bearerToken) {
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        }
+        return null;
     }
 }

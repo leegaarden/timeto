@@ -41,7 +41,10 @@ public class SecurityConfig {
                                 "/swagger-resources/**",
                                 "/webjars/**",
                                 "/error",
-                                "/api/v1/**"
+                                "/api/v1/folders/**",
+                                "/api/v1/goals/**",
+                                "/api/v1/tasks/**",
+                                "/api/v1/time-blocks/**"
                         ).permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(exceptions -> exceptions
