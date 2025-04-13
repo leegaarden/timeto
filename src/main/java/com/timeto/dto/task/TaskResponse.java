@@ -20,6 +20,9 @@ public class TaskResponse {
     @Schema(title = "TASK_RES_02 : 할 일 조회 응답")
     public record GetTaskRes (
 
+            @Schema(description = "목표 색상", example = "RED01")
+            String color,
+
             @Schema(description = "목표 이름", example = "광고학 강의 레포트")
             String goalName,
 
