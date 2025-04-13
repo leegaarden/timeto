@@ -106,7 +106,8 @@ public class TaskService {
                 task.getTime().getHour(),
                 task.getTime().getMinute(),
                 task.getLevel().name(),
-                task.getMemo()
+                task.getMemo(),
+                task.getDone()
         );
     }
 

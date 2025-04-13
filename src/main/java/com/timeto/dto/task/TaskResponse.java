@@ -43,7 +43,10 @@ public class TaskResponse {
             String level,
 
             @Schema(description = "메모", example = "다현아 화이팅")
-            String memo
+            String memo,
+
+            @Schema(description = "완료 여부", example = "미완료: false")
+            boolean done
     ) {}
 
     @Schema(title = "TASK_RES_03 : 할 일 수정 응답")
