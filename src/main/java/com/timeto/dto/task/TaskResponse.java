@@ -66,6 +66,10 @@ public class TaskResponse {
 
     @Schema(title = "TASK_RES_04 : 할 일 삭제 응답")
     public record DeleteTaskRes (
+
+            @Schema(description = "폴더 아이디", example = "1")
+            Long folderId,
+
             @Schema(description = "할 일 아이디", example = "1")
             Long taskId,
 
