@@ -95,7 +95,7 @@ public class TaskController {
         // 서비스 호출하여 할 일 조회
         TaskResponse.DeleteTaskRes response = taskService.deleteTask(taskId, userId);
 
-        return ApiResponse.success("할 일이 조회되었습니다.", response);
+        return ApiResponse.success("할 일이 삭제 되었습니다.", response);
     }
 
     @PatchMapping("/done/{taskId}")
