@@ -196,7 +196,7 @@ public class TaskService {
 
         taskRepository.delete(task);
 
-        return new TaskResponse.DeleteTaskRes(taskId, timeBlockId);
+        return new TaskResponse.DeleteTaskRes(task.getFolder().getId(), taskId, timeBlockId);
     }
 
     // 할 일 완료
