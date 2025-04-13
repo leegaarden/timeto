@@ -200,7 +200,7 @@ public class TaskService {
     }
 
     // 할 일 완료
-    public Long doneTask (Long taskId, Long userId) {
+    public TaskResponse.DoneTaskRes doneTask (Long taskId, Long userId) {
 
         // 사용자 조회
         User user = userRepository.findByIdAndActiveTrue(userId)
@@ -214,7 +214,7 @@ public class TaskService {
         task.updateDone();
         taskRepository.save(task);
 
-        return taskId;
+        return new TaskResponse.DoneTaskRes(task.getFolder().getId(), taskId);
     }
 
     // 할 일 순서 변경

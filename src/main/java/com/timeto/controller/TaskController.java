@@ -100,7 +100,7 @@ public class TaskController {
 
     @PatchMapping("/done/{taskId}")
     @Operation(summary = "TASK_API_05 : 할 일 완료", description = "특정 할 일을 완료합니다.")
-    public ApiResponse<Long> doneTask(
+    public ApiResponse<TaskResponse.DoneTaskRes> doneTask(
             @PathVariable Long taskId,
             @RequestHeader("Authorization") String token) {
 
@@ -110,7 +110,7 @@ public class TaskController {
                 .orElseThrow(() -> new GeneralException(ErrorCode.USER_DEACTIVATED))
                 .getId();
 
-        Long response = taskService.doneTask(taskId,userId);
+        TaskResponse.DoneTaskRes response = taskService.doneTask(taskId,userId);
 
         return ApiResponse.success("할 일이 완료되었습니다.", response);
     }
