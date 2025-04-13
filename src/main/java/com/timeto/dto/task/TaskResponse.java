@@ -2,6 +2,7 @@ package com.timeto.dto.task;
 
 import com.timeto.dto.folder.FolderResponse;
 import io.swagger.v3.oas.annotations.media.Schema;
+import org.springframework.session.config.annotation.web.http.EnableSpringHttpSession;
 
 import java.util.List;
 
@@ -42,7 +43,10 @@ public class TaskResponse {
             String level,
 
             @Schema(description = "메모", example = "다현아 화이팅")
-            String memo
+            String memo,
+
+            @Schema(description = "완료 여부", example = "미완료: false")
+            boolean done
     ) {}
 
     @Schema(title = "TASK_RES_03 : 할 일 수정 응답")
@@ -116,5 +120,15 @@ public class TaskResponse {
 
             @Schema(description = "타임 블럭에 넣은 날짜", example = "미정")
             String date
+    ) {}
+
+    @Schema(title = "TASK_RES_07 : 할 일 완료 응답")
+    public record DoneTaskRes (
+
+            @Schema(description = "폴더 아이디", example = "1")
+            Long folderId,
+
+            @Schema(description = "할 일 아이디", example = "1")
+            Long taskId
     ) {}
 }
