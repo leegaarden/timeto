@@ -48,11 +48,11 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         if (userOptional.isPresent()) {
             user = userOptional.get();
 
-            // 탈퇴한 회원인 경우
+            // 탈퇴한 회원인 경우 - 재활성화
             if (!user.getActive()) {
-                // 영구 탈퇴 - 로그인 거부
-                throw new OAuth2AuthenticationException(new OAuth2Error("account_deactivated"),
-                        "This account has been deactivated. Please sign up with a different email.");
+                user.setActive(true);
+                user.setDeactivatedAt(null);
+                userRepository.save(user);
             }
 
         } else {

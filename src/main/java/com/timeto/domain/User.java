@@ -28,6 +28,8 @@ public class User extends BaseEntity {
     private Boolean active;
 
     // 탈퇴 시간 추가
+    @Setter
+    @Column(nullable = true)
     private LocalDateTime deactivatedAt;
 
     @Builder
