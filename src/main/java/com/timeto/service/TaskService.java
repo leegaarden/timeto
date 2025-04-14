@@ -99,6 +99,7 @@ public class TaskService {
                 .orElseThrow(() -> new GeneralException(ErrorCode.GOAL_NOT_FOUND));
 
         return new TaskResponse.GetTaskRes(
+                folder.getId(),
                 goal.getColor().name(),
                 goal.getName(),
                 folder.getName(),
