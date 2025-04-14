@@ -22,7 +22,7 @@ public class TaskResponse {
     public record GetTaskRes (
         
             @Schema(description = "폴더 아이디", example = "1")
-            String folderId,
+            Long folderId,
 
             @Schema(description = "목표 색상", example = "RED01")
             String color,

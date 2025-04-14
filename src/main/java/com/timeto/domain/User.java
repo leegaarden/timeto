@@ -3,6 +3,8 @@ package com.timeto.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "user")
 @Getter
@@ -25,10 +27,21 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private Boolean active;
 
+    // 탈퇴 시간 추가
+    @Setter
+    @Column(nullable = true)
+    private LocalDateTime deactivatedAt;
+
     @Builder
     public User(String name, String email) {
         this.name = name;
         this.email = email;
         this.active = true;
+    }
+
+    // 탈퇴 처리 메서드
+    public void deactivate() {
+        this.active = false;
+        this.deactivatedAt = LocalDateTime.now();
     }
 }

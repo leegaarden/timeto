@@ -41,6 +41,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 User user = userRepository.findByEmail(email)
                         .orElseThrow(() -> new RuntimeException("JWT 토큰의 사용자를 찾을 수 없습니다: " + email));
 
+                // 탈퇴한 사용자 체크
+                if (!user.getActive()) {
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.setContentType("application/json");
+                    response.getWriter().write("{\"status\":\"error\",\"message\":\"탈퇴한 회원입니다.\",\"code\":\"DEACTIVATED_USER\"}");
+                    return;
+                }
+
                 // CustomOAuth2User 생성
                 var oauth2User = customOAuth2UserService.createOAuth2User(user);
 
