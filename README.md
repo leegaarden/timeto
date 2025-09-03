@@ -7,7 +7,7 @@
 ## 📋 Project Info
 
 **🔄 Fork Information**
-- **Original Repository**: [organization/original-repo](https://github.com/AIH-TimeTo/timeto-server)
+- **Original Repository**: [AIH-TimeTo/timeto-server](https://github.com/AIH-TimeTo/timeto-server)
 - **Forked by**: [이정원](https://github.com/leegaarden)
 - **Fork Purpose**: 개인 포트폴리오 및 기능 개선
 - **Fork Date**: 2025.09.02
