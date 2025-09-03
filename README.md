@@ -98,7 +98,7 @@ GET    /api/v1/users/check                 # 사용자 출석체크
 PUT /api/v1/payment-methods/{id}/default   # 기본 결제 수단 변경
 ```
 
-**📖 상세 API 명세**: [Swagger UI](https://localhost:8080/swagger-ui.html)
+**📖 상세 API 명세**: [Swagger UI](http://localhost:8080/swagger-ui/index.html)
 
 <!--
 ## 📅 Development Log
